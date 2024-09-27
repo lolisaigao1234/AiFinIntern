@@ -1,6 +1,5 @@
 import backtrader as bt
 from ib_insync import *
-import datetime
 import numpy as np
 from scipy.stats import norm
 
