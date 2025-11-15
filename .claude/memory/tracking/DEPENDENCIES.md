@@ -179,6 +179,36 @@ sentry-sdk = {version = "^2.0.0", extras = ["fastapi"]}
 
 ## 🔄 Dependency Upgrade History
 
+### 2025-11-15: Migrate pyproject.toml to PEP 621 Standard
+
+**Trigger**: Poetry deprecation warnings for [tool.poetry] metadata fields
+**Impact**: LOW - No functional changes, only configuration format migration
+**Migration Steps**:
+1. Created [project] section with all metadata (name, version, description, etc.)
+2. Converted [tool.poetry.extras] → [project.optional-dependencies]
+3. Converted [tool.poetry.scripts] → [project.scripts]
+4. Added dynamic = ["dependencies"] to indicate Poetry manages dependencies
+5. Removed deprecated [tool.poetry] metadata section
+6. Removed License classifier (now specified in [project.license])
+7. Kept [tool.poetry.dependencies] for Poetry-specific features (sources, extras)
+
+**Rollback Plan**: Revert to previous commit if Poetry compatibility issues arise
+
+**Changed Files**:
+- `pyproject.toml` - Migrated to PEP 621 [project] format
+
+**Testing Checklist**:
+- [x] Poetry check passes with no warnings
+- [ ] Poetry install works correctly
+- [ ] All dependencies resolve properly
+- [ ] Project metadata is correct
+
+**References**:
+- [PEP 621 - Storing project metadata in pyproject.toml](https://peps.python.org/pep-0621/)
+- [Poetry PEP 621 Support](https://python-poetry.org/docs/pyproject/#poetry-and-pep-621)
+
+---
+
 ### 2025-11-15: Sentry-SDK 1.39.2 → 2.0.0
 
 **Trigger**: Poetry dependency resolution failure with wandb ^0.18.7
@@ -485,6 +515,6 @@ When encountering a new dependency conflict:
 
 ---
 
-**Document Version**: 1.0
+**Document Version**: 1.1
 **Next Review**: 2025-11-22
 **Maintained By**: Project Team
