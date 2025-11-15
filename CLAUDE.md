@@ -609,6 +609,43 @@ Use **Poetry** as the primary dependency management tool with pyproject.toml con
 
 ---
 
+### [DECISION-005] - Remove pickle5 Dependency
+**Date**: 2025-11-15
+**Status**: Accepted
+**Decider**: Project Team
+
+#### Context
+Poetry dependency resolution failed because `pickle5` package requires Python >=3.5, <3.8, which is incompatible with the project's Python 3.14.0 requirement. The `pickle5` package is a backport that brings pickle protocol 5 (introduced in Python 3.8) to earlier Python versions (3.5-3.7).
+
+#### Options Considered
+1. Keep pickle5 and downgrade Python to 3.7 - Not viable, loses modern language features and ML library support
+2. Use Poetry markers to conditionally include pickle5 - Unnecessary complexity for a backport package
+3. Remove pickle5 entirely - Native pickle protocol 5+ support in Python 3.14
+
+#### Decision
+**Remove `pickle5` package completely** from dependencies. Python 3.14.0 has native support for pickle protocol 5 and all subsequent protocols, making the backport package unnecessary.
+
+#### Consequences
+**Positive**:
+- Resolves Poetry dependency conflict immediately
+- Reduces dependency count and package complexity
+- Uses native Python standard library (more reliable, no external dependency)
+- Better performance with native implementation
+- No compatibility issues with future Python versions
+- One less package to maintain and update
+
+**Negative**:
+- None - pickle5 is purely a backport for old Python versions
+
+#### Implementation Notes
+- Removed `pickle5 = "^0.0.12"` from pyproject.toml
+- Removed `pickle5==0.0.12` from requirements.txt
+- No code changes needed - Python 3.14's `pickle` module is drop-in replacement
+- Native `pickle` module supports protocols 0-5 and beyond
+- Use `import pickle` directly from standard library
+
+---
+
 ## Change Log
 
 ### Change Template
@@ -843,6 +880,50 @@ Can revert to pure requirements.txt approach by:
 1. Remove pyproject.toml
 2. Revert README.md changes
 3. Use traditional venv + pip install -r requirements.txt
+
+---
+
+### [CHANGE-005] - Remove pickle5 Dependency for Python 3.14 Compatibility
+**Date**: 2025-11-15
+**Component**: Project Root / Dependencies
+**Type**: Bugfix
+
+#### Reasoning
+Poetry dependency resolution failed with error: `pickle5 (0.0.12) requires Python >=3.5, <3.8` which is incompatible with project's `python = "^3.14"` requirement. The `pickle5` package is a backport of pickle protocol 5 from Python 3.8 to earlier versions (3.5-3.7), making it unnecessary and incompatible with Python 3.14.0.
+
+#### Expected Outcome
+- Poetry dependency resolution succeeds without conflicts
+- Successful `poetry install` execution
+- No functionality loss (Python 3.14 has native pickle protocol 5+ support)
+- Cleaner dependency tree with one less external package
+
+#### Implementation Details
+- Removed `pickle5 = "^0.0.12"` from `pyproject.toml` line 163
+- Removed `pickle5==0.0.12` from `requirements.txt` line 232
+- Verified no other files reference pickle5 using grep
+- Updated CLAUDE.md with:
+  - New decision (DECISION-005) documenting pickle5 removal rationale
+  - This change log entry (CHANGE-005)
+- No code changes required - Python 3.14's native `pickle` module is drop-in replacement
+
+#### Testing
+- [x] Verified pickle5 removal from pyproject.toml
+- [x] Verified pickle5 removal from requirements.txt
+- [x] Confirmed no other references to pickle5 in codebase
+- [ ] Poetry install verification (to be done after commit)
+- [ ] Verify pickle functionality works with native module
+
+#### Risks & Challenges
+- Minimal risk - pickle5 is purely a backport for older Python versions
+- No code uses pickle5 explicitly; standard library `pickle` is used
+- Python 3.14.0 native pickle supports all protocols (0 through 5+)
+- No performance or functionality degradation expected
+
+#### Rollback Plan
+If issues arise (highly unlikely):
+1. Revert changes to pyproject.toml and requirements.txt via git
+2. Add Python version constraint if needed: `pickle5 = {version = "^0.0.12", python = "<3.8"}`
+3. However, this would still fail with Python 3.14, so downgrading Python would be required (not recommended)
 
 ---
 
