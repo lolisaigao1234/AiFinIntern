@@ -18,7 +18,7 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.14"
+python = ">=3.14,<3.15"
 
 # Core Trading & Market Data
 ib-insync = "^0.9.86"
