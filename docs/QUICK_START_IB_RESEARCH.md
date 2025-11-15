@@ -8,15 +8,13 @@
 
 ### 1. Download and Install IB Gateway
 
-```bash
-# Download IB Gateway for Linux
-wget https://download2.interactivebrokers.com/installers/ibgateway/latest-standalone/ibgateway-latest-standalone-linux-x64.sh
+```powershell
+# Download IB Gateway for Windows 11 Pro
+# Visit: https://www.interactivebrokers.com/en/trading/ibgateway-stable.php
+# Download: ibgateway-latest-windows-x64.exe
 
-# Make executable
-chmod +x ibgateway-latest-standalone-linux-x64.sh
-
-# Install
-./ibgateway-latest-standalone-linux-x64.sh
+# Run the installer
+# Double-click the downloaded .exe file and follow the setup wizard
 ```
 
 ### 2. Configure IB Gateway
@@ -33,16 +31,16 @@ chmod +x ibgateway-latest-standalone-linux-x64.sh
 
 ### 3. Test Connection
 
-```bash
-# Navigate to project
-cd /home/user/AiFinIntern
+```powershell
+# Navigate to project (Windows)
+cd C:\path\to\AiFinIntern
 
 # Install dependencies
 poetry install
 poetry add ib-insync
 
-# Create simple test
-cat > test_quick.py << 'EOF'
+# Create simple test (PowerShell)
+@"
 from ib_insync import IB
 
 ib = IB()
@@ -50,7 +48,7 @@ ib.connect('127.0.0.1', 7497, clientId=1)
 print("✅ Connected to IB Gateway!")
 print(f"Account: {ib.managedAccounts()}")
 ib.disconnect()
-EOF
+"@ | Out-File -FilePath test_quick.py -Encoding utf8
 
 # Run test
 poetry run python test_quick.py
@@ -160,23 +158,27 @@ poetry run python tests/ib_api/test_order_placement.py
 ## 🔍 Useful Commands
 
 ### Check if IB Gateway is Running
-```bash
-netstat -tuln | grep 7497
-# Expected: tcp 0 0 127.0.0.1:7497 0.0.0.0:* LISTEN
+```powershell
+# Check port 7497 (Windows)
+netstat -an | findstr 7497
+# Expected: TCP    127.0.0.1:7497         0.0.0.0:0              LISTENING
+
+# Or using PowerShell cmdlet:
+Get-NetTCPConnection -LocalPort 7497 -ErrorAction SilentlyContinue
 ```
 
 ### View Research Files
-```bash
-# List all research documentation
-find research/ib_api -name "*.md" -type f
+```powershell
+# List all research documentation (PowerShell)
+Get-ChildItem -Path research\ib_api -Filter *.md -Recurse
 
 # View research status
-cat research/ib_api/README.md
+Get-Content research\ib_api\README.md
 ```
 
 ### Run All Tests
-```bash
-# Run all IB API tests
+```powershell
+# Run all IB API tests (PowerShell)
 poetry run pytest tests/ib_api/ -v
 
 # Run specific test category

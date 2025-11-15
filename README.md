@@ -310,7 +310,7 @@ This project is optimized for the following local development environment:
 | **CPU** | AMD Ryzen 7 7700X (8 cores, 16 threads) |
 | **GPU** | NVIDIA RTX 5090 Founders Edition (24GB VRAM) |
 | **RAM** | 32GB DDR5 |
-| **OS** | Linux (Ubuntu 22.04+ recommended) |
+| **OS** | Windows 11 Pro |
 | **CUDA** | 12.x with cuDNN 8.9+ |
 
 ### ML Model Fine-Tuning Approach
@@ -380,41 +380,42 @@ if gpus:
 ### Setting Up GPU Environment
 
 1. **Install NVIDIA Drivers**
-   ```bash
-   # Ubuntu/Debian
-   sudo apt update
-   sudo apt install nvidia-driver-550  # or latest
+   ```powershell
+   # Windows 11 Pro
+   # Download latest Game Ready or Studio Driver from:
+   # https://www.nvidia.com/Download/index.aspx
+
+   # After installation, verify in PowerShell:
    nvidia-smi  # Verify installation
    ```
 
 2. **Install CUDA Toolkit 12.x**
-   ```bash
-   # Download from NVIDIA website or use package manager
-   wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-ubuntu2204.pin
-   sudo mv cuda-ubuntu2204.pin /etc/apt/preferences.d/cuda-repository-pin-600
-   sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/3bf863cc.pub
-   sudo add-apt-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/ /"
-   sudo apt update
-   sudo apt install cuda-toolkit-12-6
+   ```powershell
+   # Download CUDA Toolkit 12.x for Windows from:
+   # https://developer.nvidia.com/cuda-downloads
+   # Select: Windows > x86_64 > 11 > exe (local)
 
-   # Add to PATH
-   echo 'export PATH=/usr/local/cuda-12.6/bin:$PATH' >> ~/.bashrc
-   echo 'export LD_LIBRARY_PATH=/usr/local/cuda-12.6/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc
-   source ~/.bashrc
+   # Run the installer (cuda_12.x.x_windows.exe)
+   # Installation will automatically add CUDA to PATH
+
+   # Verify installation in PowerShell:
+   nvcc --version
    ```
 
 3. **Install cuDNN**
-   ```bash
+   ```powershell
    # Download from NVIDIA (requires account)
-   # Install the .deb package
-   sudo dpkg -i cudnn-local-repo-ubuntu2204-8.9.x.x_1.0-1_amd64.deb
-   sudo cp /var/cudnn-local-repo-*/cudnn-local-*-keyring.gpg /usr/share/keyrings/
-   sudo apt update
-   sudo apt install libcudnn8 libcudnn8-dev
+   # https://developer.nvidia.com/cudnn
+   # Download cuDNN for CUDA 12.x (Windows)
+
+   # Extract ZIP and copy files to CUDA installation directory:
+   # Copy cudnn-*-archive\bin\*.dll to C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.x\bin
+   # Copy cudnn-*-archive\include\*.h to C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.x\include
+   # Copy cudnn-*-archive\lib\*.lib to C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.x\lib\x64
    ```
 
 4. **Install PyTorch with CUDA**
-   ```bash
+   ```powershell
    # Using pip (for CUDA 12.x)
    pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 

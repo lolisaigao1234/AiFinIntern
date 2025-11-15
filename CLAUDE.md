@@ -59,7 +59,7 @@ Build an AI-driven quantitative trading bot that:
 - **CPU**: AMD Ryzen 7 7700X (8 cores, 16 threads)
 - **GPU**: NVIDIA RTX 5090 Founders Edition (24GB VRAM)
 - **RAM**: 32GB DDR5
-- **OS**: Linux (Ubuntu 22.04+)
+- **OS**: Windows 11 Pro
 - **CUDA**: 12.x with cuDNN 8.9+
 
 ### ML Development Strategy
@@ -924,6 +924,67 @@ If issues arise (highly unlikely):
 1. Revert changes to pyproject.toml and requirements.txt via git
 2. Add Python version constraint if needed: `pickle5 = {version = "^0.0.12", python = "<3.8"}`
 3. However, this would still fail with Python 3.14, so downgrading Python would be required (not recommended)
+
+---
+
+### [CHANGE-006] - Migrate Development OS from Linux to Windows 11 Pro
+**Date**: 2025-11-15
+**Component**: Project Root / All Documentation
+**Type**: Documentation
+
+#### Reasoning
+Local development machine runs Windows 11 Pro, not Linux. All documentation and setup instructions need to reflect the actual development environment to ensure accuracy and prevent confusion when setting up IB API testing.
+
+#### Expected Outcome
+- All documentation accurately reflects Windows 11 Pro as the development OS
+- Installation instructions use PowerShell commands instead of bash
+- Directory paths use Windows conventions (backslash)
+- GPU/CUDA setup instructions are Windows-specific
+- IB Gateway/TWS installation instructions target Windows
+
+#### Implementation Details
+- Updated CLAUDE.md:
+  - Hardware Environment: Changed OS from "Linux (Ubuntu 22.04+)" to "Windows 11 Pro" (line 62)
+- Updated README.md:
+  - Hardware Specifications table: Changed OS to "Windows 11 Pro" (line 313)
+  - GPU Environment Setup: Converted all bash commands to PowerShell
+  - NVIDIA Driver installation: Updated to Windows download instructions
+  - CUDA Toolkit installation: Updated to Windows installer (.exe) instructions
+  - cuDNN installation: Updated to Windows ZIP extraction method
+  - PyTorch installation: Changed bash to powershell code blocks
+- Updated docs/IB_API_INTEGRATION_RESEARCH.md:
+  - TWS installation: Changed from Linux .sh installer to Windows .exe
+  - IB Gateway installation: Changed from Linux .sh installer to Windows .exe
+  - Python environment setup: Updated path from /home/user to C:\path\to
+  - Port verification: Changed netstat -tuln to PowerShell equivalents
+  - Directory creation: Changed mkdir -p to New-Item -ItemType Directory
+- Updated docs/QUICK_START_IB_RESEARCH.md:
+  - IB Gateway download: Changed from wget to Windows download instructions
+  - Test connection: Updated to PowerShell heredoc syntax (@"..."@)
+  - Project navigation: Changed from /home/user to C:\path\to
+  - Port check: Changed grep to findstr and PowerShell cmdlet
+  - File viewing: Changed cat to Get-Content, find to Get-ChildItem
+
+#### Testing
+- [x] Documentation review for consistency
+- [x] All code blocks updated to PowerShell
+- [x] All paths use Windows conventions
+- [ ] Verify instructions work on actual Windows 11 Pro machine
+- [ ] Test IB Gateway installation on Windows
+- [ ] Test CUDA/GPU setup on Windows
+
+#### Risks & Challenges
+- Some PowerShell commands may have different syntax across Windows versions
+- Windows firewall may require additional configuration for IB Gateway
+- CUDA installation on Windows may have different dependencies
+- File paths in tests may need updating for cross-platform compatibility
+
+#### Rollback Plan
+Can revert to Linux documentation via git:
+```bash
+git revert <commit-hash>
+```
+However, this would be misleading as the actual dev machine is Windows 11 Pro.
 
 ---
 

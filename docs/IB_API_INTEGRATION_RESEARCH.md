@@ -50,13 +50,13 @@ This document provides a comprehensive guide for researching and testing the Int
 #### 2. Software Installation
 
 **Option A: Trader Workstation (TWS)**
-```bash
+```powershell
 # Download TWS from IB website
 # https://www.interactivebrokers.com/en/trading/tws.php
 
-# Install on Linux
-chmod +x tws-latest-standalone-linux-x64.sh
-./tws-latest-standalone-linux-x64.sh
+# Install on Windows 11 Pro
+# Download: tws-latest-windows-x64.exe
+# Run the installer and follow the setup wizard
 
 # Default ports:
 # Paper Trading: 7497
@@ -64,13 +64,13 @@ chmod +x tws-latest-standalone-linux-x64.sh
 ```
 
 **Option B: IB Gateway** (Recommended for automated trading)
-```bash
+```powershell
 # Download IB Gateway (lightweight, no GUI)
 # https://www.interactivebrokers.com/en/trading/ibgateway-stable.php
 
-# Install on Linux
-chmod +x ibgateway-latest-standalone-linux-x64.sh
-./ibgateway-latest-standalone-linux-x64.sh
+# Install on Windows 11 Pro
+# Download: ibgateway-latest-windows-x64.exe
+# Run the installer and follow the setup wizard
 
 # Benefits:
 # - Lower resource usage
@@ -99,9 +99,9 @@ chmod +x ibgateway-latest-standalone-linux-x64.sh
 
 #### 4. Python Environment Setup
 
-```bash
-# Navigate to project directory
-cd /home/user/AiFinIntern
+```powershell
+# Navigate to project directory (Windows)
+cd C:\path\to\AiFinIntern
 
 # Install dependencies using Poetry
 poetry install
@@ -122,15 +122,18 @@ poetry run python -c "from ib_insync import *; print('IB API installed successfu
 
 #### Step 1: Start IB Gateway/TWS
 
-```bash
+```powershell
 # Start IB Gateway (paper trading)
-# Use the GUI or configure for headless operation
+# Launch from Start Menu or Desktop shortcut
 
-# Verify it's running on port 7497
-netstat -tuln | grep 7497
+# Verify it's running on port 7497 (PowerShell)
+netstat -an | findstr 7497
+
+# Or using PowerShell cmdlet:
+Get-NetTCPConnection -LocalPort 7497 -ErrorAction SilentlyContinue
 
 # Expected output:
-# tcp        0      0 127.0.0.1:7497          0.0.0.0:*               LISTEN
+# TCP    127.0.0.1:7497         0.0.0.0:0              LISTENING
 ```
 
 #### Step 2: Test Basic Connection
@@ -1258,10 +1261,11 @@ Each agent reports findings independently.
    - Document initial findings
 
 3. **Create Research Directory Structure**
-   ```bash
-   mkdir -p research/ib_api/{market_data,order_management,account_management,error_handling,rate_limits,performance,data_quality}
-   mkdir -p tests/ib_api/{order_types,error_handling,performance,integration}
-   mkdir -p data/ib_api_research/{historical,benchmarks,logs}
+   ```powershell
+   # PowerShell commands to create directories
+   New-Item -ItemType Directory -Force -Path research/ib_api/market_data,research/ib_api/order_management,research/ib_api/account_management,research/ib_api/error_handling,research/ib_api/rate_limits,research/ib_api/performance,research/ib_api/data_quality
+   New-Item -ItemType Directory -Force -Path tests/ib_api/order_types,tests/ib_api/error_handling,tests/ib_api/performance,tests/ib_api/integration
+   New-Item -ItemType Directory -Force -Path data/ib_api_research/historical,data/ib_api_research/benchmarks,data/ib_api_research/logs
    ```
 
 4. **Begin Market Data Research**
