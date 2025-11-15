@@ -41,7 +41,7 @@ Build an AI-driven quantitative trading bot that:
 7. Daily P&L statements with tax implications
 
 ### Technology Stack
-- **Language**: Python 3.x
+- **Language**: Python 3.14.0
 - **Trading API**: Interactive Brokers (TWS API / ibapi)
 - **Data Processing**: Pandas, NumPy
 - **Machine Learning**: scikit-learn, TensorFlow/PyTorch (TBD)
