@@ -27,8 +27,7 @@ This document provides a comprehensive guide for researching and testing the Int
 
 ### Current Status
 **Existing IB API Code**:
-- `Code/test.py` - Basic IB API connection test with historical and real-time data
-- `Code/order.py` - Trading strategy implementation with Black-Scholes model and Backtrader integration
+- `Code`: Contains a Testbed project provieded by IBKR.
 
 **Next Steps**:
 1. Set up local IB API testing environment (TWS/IB Gateway)
