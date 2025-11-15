@@ -44,11 +44,27 @@ Build an AI-driven quantitative trading bot that:
 ### Technology Stack
 - **Language**: Python 3.14.0
 - **Trading API**: Interactive Brokers (TWS API / ibapi)
-- **Data Processing**: Pandas, NumPy
-- **Machine Learning**: scikit-learn, TensorFlow/PyTorch (TBD)
-- **Database**: PostgreSQL / SQLite (TBD)
+- **Data Processing**: Pandas, NumPy, Polars
+- **Machine Learning**: PyTorch (CUDA), TensorFlow (GPU), scikit-learn, XGBoost
+- **ML Models**: Hugging Face Transformers (FinBERT, TimesNet, etc.)
+- **GPU Acceleration**: CUDA 12.x, cuDNN 8.9+, NVIDIA RTX 5090 (24GB VRAM)
+- **Database**: PostgreSQL 15+ with TimescaleDB extension
+- **Caching**: Redis 7+
 - **AI Assistance**: ChatGPT/Claude for tax interpretation
-- **Testing**: pytest, unittest
+- **Testing**: pytest, unittest, pytest-asyncio
+
+### Hardware Environment (Local Development)
+- **CPU**: AMD Ryzen 7 7700X (8 cores, 16 threads)
+- **GPU**: NVIDIA RTX 5090 Founders Edition (24GB VRAM)
+- **RAM**: 32GB DDR5
+- **OS**: Linux (Ubuntu 22.04+)
+- **CUDA**: 12.x with cuDNN 8.9+
+
+### ML Development Strategy
+- **Approach**: Fine-tuning pre-trained models (NOT training from scratch)
+- **Model Source**: Hugging Face Model Hub and other open-source platforms
+- **Fine-tuning Focus**: Financial sentiment, time series forecasting, pattern recognition
+- **GPU Utilization**: Maximum leverage of CUDA, PyTorch, and TensorFlow capabilities
 
 ### Existing Files
 - `Code/order.py` - Interactive Brokers API trading logic tests
@@ -461,6 +477,88 @@ Use CLAUDE.md as the single source of truth for project memory, decisions, and a
 
 ---
 
+### [DECISION-002] - ML Fine-Tuning Over Training From Scratch
+**Date**: 2025-11-15
+**Status**: Accepted
+**Decider**: Project Team
+
+#### Context
+Need to decide whether to train ML models from scratch or fine-tune existing pre-trained models for trading signal generation and financial analysis.
+
+#### Options Considered
+1. Train models from scratch - Full control but resource intensive
+2. Fine-tune pre-trained models - Leverage existing research, faster development
+3. Hybrid approach - Mix of both strategies
+
+#### Decision
+Focus on **fine-tuning pre-trained models** from Hugging Face and other open-source platforms rather than training from scratch.
+
+#### Consequences
+**Positive**:
+- Significantly reduced training time and computational costs
+- Leverage state-of-the-art architectures from research community
+- Better performance with limited financial data (transfer learning)
+- Access to specialized financial models (FinBERT, etc.)
+- Faster iteration and experimentation
+- Lower barrier to entry for ML development
+
+**Negative**:
+- Less flexibility in model architecture design
+- Dependency on external model repositories
+- May need to adapt models that weren't designed for trading
+- Potential licensing considerations for commercial use
+
+#### Implementation Notes
+- Prioritize financial-specific models (FinBERT, financial sentiment analyzers)
+- Use Hugging Face Transformers library as primary framework
+- Implement fine-tuning pipeline with PyTorch/TensorFlow
+- Leverage local GPU (RTX 5090) for efficient fine-tuning
+- Document all pre-trained models used and their licenses
+
+---
+
+### [DECISION-003] - Local Development with NVIDIA RTX 5090
+**Date**: 2025-11-15
+**Status**: Accepted
+**Decider**: Project Team
+
+#### Context
+Need to optimize development environment for ML model fine-tuning and training with available hardware: AMD R7-7700X CPU, NVIDIA RTX 5090 FE GPU (24GB VRAM), 32GB RAM.
+
+#### Options Considered
+1. Cloud-based GPU training (AWS, GCP, Azure)
+2. Local GPU development with RTX 5090
+3. Hybrid approach (local dev, cloud for large-scale training)
+
+#### Decision
+Optimize for **local development using NVIDIA RTX 5090** with full CUDA, PyTorch, and TensorFlow GPU acceleration.
+
+#### Consequences
+**Positive**:
+- Zero cloud compute costs during development
+- Full control over environment and dependencies
+- 24GB VRAM sufficient for fine-tuning large models
+- Low latency for iterative development
+- No data transfer costs or privacy concerns
+- Can utilize all 8 CPU cores for data preprocessing
+
+**Negative**:
+- Limited to single GPU (no multi-GPU training)
+- 32GB system RAM may limit very large dataset operations
+- Electricity costs for GPU usage
+- Cannot scale beyond local hardware limits
+- Need to maintain CUDA/driver compatibility
+
+#### Implementation Notes
+- Install CUDA 12.x with cuDNN 8.9+ for optimal RTX 5090 performance
+- Configure PyTorch with CUDA backend (cu121)
+- Enable mixed precision training (FP16) for faster training
+- Use gradient checkpointing for memory-intensive models
+- Monitor GPU temperature and utilization
+- Consider cloud deployment for production inference at scale
+
+---
+
 ## Change Log
 
 ### Change Template
@@ -577,6 +675,62 @@ Comprehensive technical architecture and agent specifications needed to guide de
 
 #### Rollback Plan
 Can revert to simpler structure if needed, but architecture provides valuable blueprint for implementation.
+
+---
+
+### [CHANGE-003] - Local Development Setup and ML Fine-Tuning Specifications
+**Date**: 2025-11-15
+**Component**: Project Root / All Documentation
+**Type**: Documentation
+
+#### Reasoning
+Need to document local development hardware specifications, ML fine-tuning approach (vs training from scratch), and GPU optimization strategies to guide efficient development and ensure proper environment setup.
+
+#### Expected Outcome
+- Clear hardware requirements documented (AMD R7-7700X, RTX 5090, 32GB RAM)
+- ML development approach defined (fine-tuning pre-trained models)
+- CUDA/PyTorch/TensorFlow GPU optimization strategies specified
+- Comprehensive local setup guide for developers
+- Updated Python version to 3.14.0 across all documentation
+
+#### Implementation Details
+- Updated README.md with:
+  - New "Local Development Setup" section
+  - Hardware specifications table
+  - ML fine-tuning philosophy and approach
+  - Recommended pre-trained models from Hugging Face
+  - GPU optimization strategies for PyTorch and TensorFlow
+  - CUDA/cuDNN installation instructions
+  - Fine-tuning workflow examples
+  - Performance benchmarks for RTX 5090
+  - Memory management tips
+  - Troubleshooting guide
+- Updated CLAUDE.md with:
+  - Technology stack including GPU specifications
+  - Hardware environment section
+  - ML development strategy
+  - Two new decisions (DECISION-002, DECISION-003)
+  - This change log entry
+- Updated Python version from 3.11+ to 3.14.0 throughout documentation
+- Added CUDA badge to README.md
+- Updated Machine Learning section with fine-tuning focus
+
+#### Testing
+- [x] Documentation review
+- [ ] Hardware specifications validation
+- [ ] GPU setup testing
+- [ ] Fine-tuning workflow validation
+- [ ] Requirements file updates pending
+
+#### Risks & Challenges
+- RTX 5090 may have evolving driver/CUDA support requirements
+- Python 3.14.0 is very recent, may have limited library support initially
+- Some Hugging Face models may require modifications for financial data
+- 24GB VRAM may limit certain very large model fine-tuning
+- Need to maintain CUDA version compatibility across PyTorch/TensorFlow
+
+#### Rollback Plan
+Can revert to cloud-based GPU training if local setup proves problematic. Documentation changes can be reverted via git.
 
 ---
 

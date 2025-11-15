@@ -2,9 +2,10 @@
 
 An intelligent, automated trading system that combines machine learning, algorithmic trading, and comprehensive tax reconciliation for the US market.
 
-[![Python Version](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Python Version](https://img.shields.io/badge/python-3.14.0-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![CUDA](https://img.shields.io/badge/CUDA-Enabled-green.svg)](https://developer.nvidia.com/cuda-toolkit)
 
 ---
 
@@ -30,10 +31,13 @@ This project implements a sophisticated quantitative trading bot that:
 - Comprehensive risk management with position limits and circuit breakers
 
 ### Machine Learning
-- LSTM neural networks for price prediction
-- Random Forest for pattern recognition
-- Ensemble methods combining multiple models
+- **Fine-tuned transformer models** from Hugging Face for price prediction and sentiment analysis
+- **Pre-trained models** adapted for financial time series (FinBERT, TimesNet, etc.)
+- LSTM neural networks for sequential pattern recognition
+- Random Forest and XGBoost for feature-based predictions
+- Ensemble methods combining multiple fine-tuned models
 - Walk-forward optimization for robust backtesting
+- **GPU-accelerated training** using CUDA, PyTorch, and TensorFlow
 
 ### Tax & Compliance
 - Automated wash-sale detection per IRS Publication 550
@@ -87,10 +91,12 @@ For detailed architecture information, see [ARCHITECTURE.md](./ARCHITECTURE.md).
 
 | Category | Technologies |
 |----------|-------------|
-| **Language** | Python 3.11+ |
+| **Language** | Python 3.14.0 |
 | **Trading API** | Interactive Brokers (ib_insync) |
 | **Data Processing** | Pandas, NumPy, Polars |
-| **Machine Learning** | scikit-learn, TensorFlow, PyTorch, XGBoost |
+| **Machine Learning** | PyTorch (CUDA), TensorFlow (GPU), scikit-learn, XGBoost |
+| **ML Models** | Hugging Face Transformers, FinBERT, TimesNet, LightGBM |
+| **GPU Acceleration** | CUDA 12.x, cuDNN, NVIDIA RTX 5090 optimized |
 | **Database** | PostgreSQL 15+ with TimescaleDB extension |
 | **Caching** | Redis 7+ |
 | **Web Framework** | FastAPI with Uvicorn |
@@ -157,11 +163,13 @@ AiFinIntern/
 
 ### Prerequisites
 
-- Python 3.11 or higher
+- **Python 3.14.0** (required)
 - PostgreSQL 15+ with TimescaleDB extension
 - Redis 7+
 - Interactive Brokers TWS or IB Gateway (for live/paper trading)
 - Docker & Docker Compose (optional, for containerized deployment)
+- **NVIDIA GPU with CUDA 12.x** (recommended for ML training)
+- CUDA Toolkit and cuDNN libraries (for GPU acceleration)
 
 ### Setup Steps
 
@@ -236,6 +244,310 @@ AiFinIntern/
    # Or using Docker
    docker-compose up
    ```
+
+---
+
+## Local Development Setup
+
+### Hardware Specifications
+
+This project is optimized for the following local development environment:
+
+| Component | Specification |
+|-----------|--------------|
+| **CPU** | AMD Ryzen 7 7700X (8 cores, 16 threads) |
+| **GPU** | NVIDIA RTX 5090 Founders Edition (24GB VRAM) |
+| **RAM** | 32GB DDR5 |
+| **OS** | Linux (Ubuntu 22.04+ recommended) |
+| **CUDA** | 12.x with cuDNN 8.9+ |
+
+### ML Model Fine-Tuning Approach
+
+**Philosophy**: We focus on **fine-tuning pre-trained models** rather than training from scratch to:
+- Leverage state-of-the-art architectures from the research community
+- Reduce training time and computational costs
+- Achieve better performance with limited data
+- Utilize transfer learning from large-scale datasets
+
+#### Recommended Pre-trained Models
+
+**From Hugging Face:**
+
+1. **Financial Sentiment & Text Analysis**
+   - `ProsusAI/finbert` - Financial sentiment analysis
+   - `yiyanghkust/finbert-tone` - Financial tone detection
+   - `mrm8488/distilroberta-finetuned-financial-news-sentiment-analysis`
+
+2. **Time Series Forecasting**
+   - `AutonLab/MOMENT-1-large` - Pre-trained time series foundation model
+   - `google/timesfm-1.0-200m` - Time series forecasting
+   - `ibm/chronos-t5-base` - Time series transformer
+
+3. **General Purpose Transformers** (for fine-tuning)
+   - `distilbert-base-uncased` - Lighter BERT variant
+   - `microsoft/deberta-v3-base` - High-performance transformer
+   - `google/flan-t5-base` - Versatile encoder-decoder
+
+#### GPU Optimization Strategy
+
+**PyTorch CUDA Configuration:**
+
+```python
+import torch
+
+# Verify CUDA availability
+assert torch.cuda.is_available(), "CUDA not available!"
+print(f"CUDA Version: {torch.version.cuda}")
+print(f"GPU: {torch.cuda.get_device_name(0)}")
+print(f"VRAM: {torch.cuda.get_device_properties(0).total_memory / 1e9:.2f} GB")
+
+# Optimization settings for RTX 5090
+torch.backends.cudnn.benchmark = True  # Auto-tune kernels
+torch.backends.cuda.matmul.allow_tf32 = True  # Use TF32 for matmul
+torch.set_float32_matmul_precision('high')  # Better performance
+```
+
+**TensorFlow GPU Configuration:**
+
+```python
+import tensorflow as tf
+
+# GPU memory growth (prevents OOM)
+gpus = tf.config.list_physical_devices('GPU')
+if gpus:
+    for gpu in gpus:
+        tf.config.experimental.set_memory_growth(gpu, True)
+
+    # Enable mixed precision for RTX 5090
+    tf.keras.mixed_precision.set_global_policy('mixed_float16')
+
+    print(f"TensorFlow GPU: {tf.test.gpu_device_name()}")
+    print(f"CUDA: {tf.test.is_built_with_cuda()}")
+```
+
+### Setting Up GPU Environment
+
+1. **Install NVIDIA Drivers**
+   ```bash
+   # Ubuntu/Debian
+   sudo apt update
+   sudo apt install nvidia-driver-550  # or latest
+   nvidia-smi  # Verify installation
+   ```
+
+2. **Install CUDA Toolkit 12.x**
+   ```bash
+   # Download from NVIDIA website or use package manager
+   wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-ubuntu2204.pin
+   sudo mv cuda-ubuntu2204.pin /etc/apt/preferences.d/cuda-repository-pin-600
+   sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/3bf863cc.pub
+   sudo add-apt-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/ /"
+   sudo apt update
+   sudo apt install cuda-toolkit-12-6
+
+   # Add to PATH
+   echo 'export PATH=/usr/local/cuda-12.6/bin:$PATH' >> ~/.bashrc
+   echo 'export LD_LIBRARY_PATH=/usr/local/cuda-12.6/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc
+   source ~/.bashrc
+   ```
+
+3. **Install cuDNN**
+   ```bash
+   # Download from NVIDIA (requires account)
+   # Install the .deb package
+   sudo dpkg -i cudnn-local-repo-ubuntu2204-8.9.x.x_1.0-1_amd64.deb
+   sudo cp /var/cudnn-local-repo-*/cudnn-local-*-keyring.gpg /usr/share/keyrings/
+   sudo apt update
+   sudo apt install libcudnn8 libcudnn8-dev
+   ```
+
+4. **Install PyTorch with CUDA**
+   ```bash
+   # Using pip (for CUDA 12.x)
+   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+
+   # Verify installation
+   python -c "import torch; print(f'CUDA available: {torch.cuda.is_available()}')"
+   ```
+
+5. **Install TensorFlow with GPU support**
+   ```bash
+   pip install tensorflow[and-cuda]
+
+   # Verify GPU detection
+   python -c "import tensorflow as tf; print(f'GPUs: {tf.config.list_physical_devices(\"GPU\")}')"
+   ```
+
+6. **Install Hugging Face Libraries**
+   ```bash
+   pip install transformers datasets accelerate evaluate
+   pip install sentencepiece protobuf  # For certain models
+   pip install bitsandbytes  # For quantization (optional)
+   ```
+
+### Fine-Tuning Workflow
+
+**Example: Fine-tuning FinBERT for Custom Financial Sentiment**
+
+```python
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from transformers import Trainer, TrainingArguments
+import torch
+
+# Load pre-trained FinBERT
+model_name = "ProsusAI/finbert"
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForSequenceClassification.from_pretrained(
+    model_name,
+    num_labels=3  # Positive, Negative, Neutral
+)
+
+# Move to GPU
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model.to(device)
+
+# Training arguments optimized for RTX 5090
+training_args = TrainingArguments(
+    output_dir="./models/finbert_finetuned",
+    num_train_epochs=3,
+    per_device_train_batch_size=32,  # Large batch size for 24GB VRAM
+    per_device_eval_batch_size=64,
+    gradient_accumulation_steps=2,
+    learning_rate=2e-5,
+    warmup_steps=500,
+    weight_decay=0.01,
+    logging_dir="./logs",
+    logging_steps=10,
+    evaluation_strategy="steps",
+    eval_steps=100,
+    save_strategy="steps",
+    save_steps=500,
+    load_best_model_at_end=True,
+    fp16=True,  # Mixed precision for faster training
+    dataloader_num_workers=8,  # Utilize all CPU cores
+    optim="adamw_torch_fused",  # Faster optimizer for CUDA
+)
+
+# Initialize trainer
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=train_dataset,  # Your custom dataset
+    eval_dataset=eval_dataset,
+)
+
+# Fine-tune the model
+trainer.train()
+
+# Save fine-tuned model
+model.save_pretrained("./models/finbert_custom")
+tokenizer.save_pretrained("./models/finbert_custom")
+```
+
+### Performance Benchmarks
+
+**Expected Training Performance (RTX 5090):**
+
+| Model | Parameters | Batch Size | Training Time (1 epoch) |
+|-------|-----------|------------|------------------------|
+| FinBERT | 110M | 32 | ~15 minutes (10k samples) |
+| DistilBERT | 66M | 64 | ~8 minutes (10k samples) |
+| LSTM (custom) | 5M | 256 | ~2 minutes (10k samples) |
+| Random Forest | N/A | N/A | ~30 seconds (10k samples) |
+
+### Memory Management Tips
+
+**For 24GB VRAM on RTX 5090:**
+
+1. **Gradient Checkpointing** (reduce memory, slight speed trade-off)
+   ```python
+   model.gradient_checkpointing_enable()
+   ```
+
+2. **Batch Size Optimization**
+   - Start with batch size 32, increase if memory allows
+   - Use gradient accumulation for effective larger batches
+
+3. **Mixed Precision Training**
+   ```python
+   from torch.cuda.amp import autocast, GradScaler
+
+   scaler = GradScaler()
+   with autocast():
+       outputs = model(**inputs)
+       loss = outputs.loss
+   ```
+
+4. **Model Quantization** (for inference)
+   ```python
+   from transformers import BitsAndBytesConfig
+
+   quantization_config = BitsAndBytesConfig(
+       load_in_8bit=True,  # 8-bit quantization
+       llm_int8_threshold=6.0
+   )
+   ```
+
+### Development Workflow
+
+1. **Data Preparation**
+   - Collect and preprocess financial data
+   - Create train/validation/test splits
+   - Store in efficient formats (Parquet, HDF5)
+
+2. **Model Selection**
+   - Browse Hugging Face Model Hub
+   - Download pre-trained model
+   - Test baseline performance
+
+3. **Fine-tuning**
+   - Configure training parameters
+   - Monitor GPU utilization (`nvidia-smi`)
+   - Track metrics with TensorBoard
+
+4. **Evaluation**
+   - Test on held-out dataset
+   - Compare with baseline
+   - Analyze errors
+
+5. **Deployment**
+   - Export optimized model
+   - Implement inference pipeline
+   - Integrate with trading system
+
+### Monitoring GPU Usage
+
+```bash
+# Real-time GPU monitoring
+watch -n 1 nvidia-smi
+
+# Log GPU usage to file
+nvidia-smi --query-gpu=timestamp,name,temperature.gpu,utilization.gpu,utilization.memory,memory.total,memory.free,memory.used --format=csv -l 5 > gpu_usage.csv
+
+# Install and use nvtop for interactive monitoring
+sudo apt install nvtop
+nvtop
+```
+
+### Troubleshooting
+
+**CUDA Out of Memory:**
+- Reduce batch size
+- Enable gradient checkpointing
+- Use gradient accumulation
+- Clear cache: `torch.cuda.empty_cache()`
+
+**Slow Training:**
+- Verify CUDA is being used: `model.device`
+- Enable cudNN benchmarking
+- Use mixed precision (FP16)
+- Increase dataloader workers
+
+**Model Not Converging:**
+- Adjust learning rate
+- Increase warmup steps
+- Try different optimizer (AdamW, SGD)
+- Check data preprocessing
 
 ---
 
