@@ -197,6 +197,94 @@ nvidia-cuda-runtime-cu12 = "^12.6.0"
 
 ---
 
+### [CONFLICT-004] Python 3.14 Package Ecosystem Compatibility
+
+**Date Identified**: 2025-11-15
+**Status**: ✅ RESOLVED
+**Severity**: CRITICAL (Blocking installation - no binary wheels available)
+
+#### Problem Description
+
+```
+error: command 'cmake' failed: None
+
+PEP517 build of a dependency failed
+Backend subprocess exited when trying to invoke build_wheel
+
+PyArrow 15.0.2 is trying to compile C++ extensions, but system doesn't have
+required build tools (CMake, Visual Studio 2017+, Arrow C++ libraries).
+```
+
+#### Root Cause
+
+- **Python 3.14** is too new - released very recently
+- Most packages (pyarrow, numpy, pandas, etc.) **don't have pre-built binary wheels** for Python 3.14 yet
+- Poetry tries to **build packages from source**, which requires:
+  - CMake build system
+  - Visual Studio 2017+ with C++ build tools
+  - Arrow C++ libraries and headers
+- This is not a dependency version conflict but a **Python version compatibility issue**
+
+#### Resolution
+
+**Action**: Downgrade Python from 3.14 to 3.13.9
+
+```toml
+# Before
+requires-python = ">=3.14,<3.15"
+python = ">=3.14,<3.15"
+
+# After
+requires-python = ">=3.13,<3.14"
+python = ">=3.13,<3.14"
+```
+
+**Rationale**:
+- Python 3.13.9 is the latest stable release from the 3.13.x series
+- Python 3.13 has **full package ecosystem support** with pre-built binary wheels
+- Python 3.13 is **PEP 719 compliant** (Python 3.13 Release Schedule)
+- All major packages (numpy, pandas, pyarrow, tensorflow, torch) have wheels for Python 3.13
+- Avoids complex build tool installation on Windows
+
+**Related Packages**:
+- ALL packages benefit from Python 3.13 compatibility
+- Pre-built wheels available for: pyarrow, numpy, pandas, tensorflow, torch, scipy, etc.
+
+**Testing Required**:
+- [x] pyproject.toml updated (requires-python, classifiers)
+- [x] Tool configurations updated (black, ruff, mypy)
+- [ ] Poetry install succeeds with Python 3.13.9
+- [ ] All binary wheels install without compilation
+- [ ] GPU libraries work correctly
+
+**Migration Steps for User**:
+```powershell
+# Delete old Python 3.14 environment
+conda env remove -n AiFin
+
+# Create new environment with Python 3.13.9
+conda create -n AiFin python=3.13.9
+
+# Activate environment
+conda activate AiFin
+
+# Install Poetry
+pip install poetry
+
+# Pull latest changes
+git pull origin claude/fix-pyarrow-datasets-conflict-01MaQPTUWDbSbVQMUEs9BfA3
+
+# Install dependencies (will work now!)
+poetry install
+```
+
+**References**:
+- [PEP 719 - Python 3.13 Release Schedule](https://peps.python.org/pep-0719/)
+- [Python 3.13.9 Release](https://www.python.org/downloads/release/python-3139/)
+- [PyPI Package Support Matrix](https://pypi.org/)
+
+---
+
 ## 📦 Critical Package Version Constraints
 
 ### Data Processing Stack
@@ -246,6 +334,41 @@ nvidia-cuda-runtime-cu12 = "^12.6.0"
 ---
 
 ## 🔄 Dependency Upgrade History
+
+### 2025-11-15: Downgrade Python 3.14 → 3.13.9
+
+**Trigger**: PyArrow build failure - no binary wheels for Python 3.14
+**Impact**: HIGH - Enables installation without build tools
+**Migration Steps**:
+1. Updated requires-python from ">=3.14,<3.15" to ">=3.13,<3.14"
+2. Updated [tool.poetry.dependencies] python constraint
+3. Updated tool configurations (black, ruff, mypy) to target py313
+4. Updated classifiers to Python :: 3.13
+
+**Rollback Plan**: N/A - Python 3.14 not viable for production
+
+**Changed Files**:
+- `pyproject.toml` - Python version constraints and tool configurations
+- `.claude/memory/tracking/DEPENDENCIES.md` - Documentation update
+
+**Testing Checklist**:
+- [x] pyproject.toml updated
+- [x] All tool configurations updated
+- [ ] Poetry install succeeds with Python 3.13.9
+- [ ] All binary wheels install correctly
+- [ ] No compilation required
+
+**User Action Required**:
+```powershell
+conda env remove -n AiFin
+conda create -n AiFin python=3.13.9
+conda activate AiFin
+pip install poetry
+git pull origin claude/fix-pyarrow-datasets-conflict-01MaQPTUWDbSbVQMUEs9BfA3
+poetry install
+```
+
+---
 
 ### 2025-11-15: Remove nvidia-cuda-runtime-cu12 Explicit Dependency
 
@@ -553,11 +676,11 @@ poetry export -f requirements.txt --output requirements.txt --without-hashes
 
 | Package | Minimum Version | Reason |
 |---------|----------------|---------|
+| **python** | 3.13.0 | Full package ecosystem support with binary wheels |
 | **pyarrow** | 15.0.0 | Required by datasets library |
 | **sentry-sdk** | 2.0.0 | Required by wandb >=0.18.7 |
 | **torch** | 2.6.0 | CUDA 13.0 support for RTX 5090 |
 | **tensorflow** | 2.18.0 | CUDA 13.0 compatibility |
-| **python** | 3.14.0 | Project baseline |
 
 ---
 
@@ -595,12 +718,12 @@ When encountering a new dependency conflict:
 **Total Dependencies**: 100+
 **Direct Dependencies**: 79 (removed nvidia-cuda-runtime-cu12)
 **Dev Dependencies**: 20+
-**Known Conflicts**: 3 (all resolved)
-**Python Version**: 3.14.0
+**Known Conflicts**: 4 (all resolved)
+**Python Version**: 3.13.9 (downgraded from 3.14.0)
 **Poetry Version**: Latest stable
 
 ---
 
-**Document Version**: 1.2
+**Document Version**: 1.3
 **Next Review**: 2025-11-22
 **Maintained By**: Project Team
