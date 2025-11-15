@@ -217,7 +217,7 @@ AiFinIntern/
    poetry shell
 
    # IMPORTANT: Install PyTorch with CUDA separately
-   poetry run pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+   poetry run pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu130
    ```
 
    **Option B: Using pip**
