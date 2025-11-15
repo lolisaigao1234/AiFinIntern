@@ -229,7 +229,6 @@ watchdog==3.0.0                # File system monitoring
 # JSON & Data Serialization
 orjson==3.9.10                 # Fast JSON library
 msgpack==1.0.7                 # MessagePack serialization
-pickle5==0.0.12                # Pickle protocol 5 backport
 
 # ============================================================================
 # Environment & Platform
