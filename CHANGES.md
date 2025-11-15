@@ -1,0 +1,451 @@
+# Change Log
+
+**Project**: AI-Driven Tax and Portfolio Reconciliation System
+**Last Updated**: 2025-11-15
+**Documentation Home**: [CLAUDE.md](./CLAUDE.md)
+
+---
+
+## Overview
+
+This document tracks all significant changes, implementations, and modifications made to the project. Each change entry includes reasoning, expected outcomes, implementation details, testing status, and rollback plans.
+
+**Related Documentation**:
+- [CLAUDE.md](./CLAUDE.md) - Main project overview
+- [DECISIONS.md](./DECISIONS.md) - Decision log
+- [RISKS.md](./RISKS.md) - Risk register
+- [ROADMAP.md](./ROADMAP.md) - Project phases and milestones
+
+---
+
+## Change Template
+
+```markdown
+### [CHANGE-XXX] - Change Title
+**Date**: YYYY-MM-DD
+**Component**: [Component Name]
+**Type**: Feature | Bugfix | Refactor | Documentation | Performance
+
+#### Reasoning
+[Why was this change needed?]
+
+#### Expected Outcome
+[What should happen after this change?]
+
+#### Implementation Details
+- [Detail 1]
+- [Detail 2]
+
+#### Testing
+- [ ] Unit tests added/updated
+- [ ] Integration tests passed
+- [ ] Manual testing completed
+
+#### Risks & Challenges
+[Any potential issues or challenges encountered]
+
+#### Rollback Plan
+[How to revert this change if needed]
+```
+
+---
+
+## Changes
+
+### [CHANGE-001] - Initial Project Setup
+**Date**: 2025-11-15
+**Component**: Project Root
+**Type**: Documentation
+
+#### Reasoning
+Initialize CLAUDE.md to establish project structure, architecture, and planning framework.
+
+#### Expected Outcome
+- Clear project roadmap
+- Documented architecture
+- Testing strategy defined
+- Component structure established
+
+#### Implementation Details
+- Created CLAUDE.md with comprehensive sections
+- Defined 5 main subagents for work delegation
+- Outlined 4-phase development approach
+- Established testing and validation framework
+
+#### Testing
+- [x] Documentation review
+- [ ] Stakeholder approval pending
+
+#### Risks & Challenges
+- Architecture may need refinement as development progresses
+- Subagent delegation boundaries may need adjustment
+- Phase timelines are estimates
+
+#### Rollback Plan
+N/A - Initial setup
+
+---
+
+### [CHANGE-002] - Architecture and Agent Documentation
+**Date**: 2025-11-15
+**Component**: Project Root / All Components
+**Type**: Documentation
+
+#### Reasoning
+Comprehensive technical architecture and agent specifications needed to guide development and avoid context overflow during AI-assisted development.
+
+#### Expected Outcome
+- Complete technical blueprint for implementation
+- Clear agent responsibilities and boundaries
+- Structured directory layout matching architecture
+- Prevention of context overflow issues during development
+
+#### Implementation Details
+- Created ARCHITECTURE.md with detailed technical specifications
+  - Database schema design (PostgreSQL + TimescaleDB)
+  - API specifications using FastAPI
+  - Class diagrams and data models
+  - Security and deployment architecture
+  - Performance targets and optimization strategies
+- Created AGENTS.md with agent hierarchy
+  - 5 main agents with 15 sub-agents total
+  - Context size limits for each agent (8K-12K tokens)
+  - Agent communication patterns (message passing, event bus)
+  - Decision boundaries for autonomous operation
+- Created full directory structure:
+  - `components/` with 5 main layers (data, strategy, execution, tax_recon, reporting)
+  - `agents/` subdirectories in each component
+  - `tests/` structure (unit, integration, paper_trading)
+  - `config/`, `docs/`, `logs/`, `data/` directories
+- Created README.md for each component documenting purpose and responsibilities
+- Added __init__.py files to create proper Python package structure
+- Updated CLAUDE.md with cross-references to new documentation
+
+#### Testing
+- [x] Documentation structure review
+- [x] Directory structure validation
+- [ ] Stakeholder review of architecture
+- [ ] Agent specification validation
+
+#### Risks & Challenges
+- Architecture may need refinement during implementation
+- Agent context limits may need adjustment based on real usage
+- Directory structure may evolve as implementation progresses
+- Need to keep all documentation synchronized
+
+#### Rollback Plan
+Can revert to simpler structure if needed, but architecture provides valuable blueprint for implementation.
+
+---
+
+### [CHANGE-003] - Local Development Setup and ML Fine-Tuning Specifications
+**Date**: 2025-11-15
+**Component**: Project Root / All Documentation
+**Type**: Documentation
+
+#### Reasoning
+Need to document local development hardware specifications, ML fine-tuning approach (vs training from scratch), and GPU optimization strategies to guide efficient development and ensure proper environment setup.
+
+#### Expected Outcome
+- Clear hardware requirements documented (AMD R7-7700X, RTX 5090, 32GB RAM)
+- ML development approach defined (fine-tuning pre-trained models)
+- CUDA/PyTorch/TensorFlow GPU optimization strategies specified
+- Comprehensive local setup guide for developers
+- Updated Python version to 3.14.0 across all documentation
+
+#### Implementation Details
+- Updated README.md with:
+  - New "Local Development Setup" section
+  - Hardware specifications table
+  - ML fine-tuning philosophy and approach
+  - Recommended pre-trained models from Hugging Face
+  - GPU optimization strategies for PyTorch and TensorFlow
+  - CUDA/cuDNN installation instructions
+  - Fine-tuning workflow examples
+  - Performance benchmarks for RTX 5090
+  - Memory management tips
+  - Troubleshooting guide
+- Updated CLAUDE.md with:
+  - Technology stack including GPU specifications
+  - Hardware environment section
+  - ML development strategy
+  - Two new decisions (DECISION-002, DECISION-003)
+  - This change log entry
+- Updated Python version from 3.11+ to 3.14.0 throughout documentation
+- Added CUDA badge to README.md
+- Updated Machine Learning section with fine-tuning focus
+
+#### Testing
+- [x] Documentation review
+- [ ] Hardware specifications validation
+- [ ] GPU setup testing
+- [ ] Fine-tuning workflow validation
+- [ ] Requirements file updates pending
+
+#### Risks & Challenges
+- RTX 5090 may have evolving driver/CUDA support requirements
+- Python 3.14.0 is very recent, may have limited library support initially
+- Some Hugging Face models may require modifications for financial data
+- 24GB VRAM may limit certain very large model fine-tuning
+- Need to maintain CUDA version compatibility across PyTorch/TensorFlow
+
+#### Rollback Plan
+Can revert to cloud-based GPU training if local setup proves problematic. Documentation changes can be reverted via git.
+
+---
+
+### [CHANGE-004] - Poetry Configuration and Dependency Management
+**Date**: 2025-11-15
+**Component**: Project Root / Configuration
+**Type**: Feature
+
+#### Reasoning
+Need modern dependency management with deterministic builds, better dependency resolution, and clear separation between development and production dependencies. Traditional requirements.txt approach lacks lock file support and proper dependency group management.
+
+#### Expected Outcome
+- Reproducible builds across all development environments
+- Simplified dependency installation and management
+- Better tooling integration (black, ruff, mypy, pytest)
+- Clear documentation for new developers
+- Optional dependency groups for CUDA and Jupyter
+
+#### Implementation Details
+- Created comprehensive `pyproject.toml` with:
+  - All production dependencies from requirements.txt
+  - Separated development dependencies (testing, linting, profiling)
+  - Optional dependency groups (cuda, jupyter)
+  - Complete tool configuration (black, ruff, mypy, pytest, isort, coverage)
+  - PyTorch CUDA repository configuration
+  - Project metadata and entry points
+- Updated README.md with:
+  - Poetry installation instructions
+  - Step-by-step dependency installation guide
+  - Poetry command examples for testing, formatting, linting
+  - GPU verification commands
+  - Dependency management workflows
+  - Added Poetry badge to README
+- Updated CLAUDE.md with:
+  - New decision (DECISION-004) documenting Poetry adoption
+  - This change log entry (CHANGE-004)
+- Preserved requirements.txt as fallback for pip-only environments
+- Configured Poetry extras:
+  - `cuda` - PyTorch with CUDA support
+  - `jupyter` - Jupyter notebook environment
+  - `all` - All optional dependencies
+
+#### Testing
+- [ ] Poetry install verification
+- [ ] Dependency resolution testing
+- [ ] CUDA package installation testing
+- [ ] Tool configuration validation (black, ruff, mypy)
+- [ ] Virtual environment creation
+- [ ] Lock file generation
+
+#### Risks & Challenges
+- Poetry may have issues with PyTorch CUDA wheels (requires pip fallback)
+- Team members need to learn Poetry commands
+- Some CI/CD pipelines may need updating
+- poetry.lock file increases repository size
+- Python 3.14.0 is very new, may have limited Poetry compatibility testing
+
+#### Rollback Plan
+Can revert to pure requirements.txt approach by:
+1. Remove pyproject.toml
+2. Revert README.md changes
+3. Use traditional venv + pip install -r requirements.txt
+
+---
+
+### [CHANGE-005] - Remove pickle5 Dependency for Python 3.14 Compatibility
+**Date**: 2025-11-15
+**Component**: Project Root / Dependencies
+**Type**: Bugfix
+
+#### Reasoning
+Poetry dependency resolution failed with error: `pickle5 (0.0.12) requires Python >=3.5, <3.8` which is incompatible with project's `python = "^3.14"` requirement. The `pickle5` package is a backport of pickle protocol 5 from Python 3.8 to earlier versions (3.5-3.7), making it unnecessary and incompatible with Python 3.14.0.
+
+#### Expected Outcome
+- Poetry dependency resolution succeeds without conflicts
+- Successful `poetry install` execution
+- No functionality loss (Python 3.14 has native pickle protocol 5+ support)
+- Cleaner dependency tree with one less external package
+
+#### Implementation Details
+- Removed `pickle5 = "^0.0.12"` from `pyproject.toml` line 163
+- Removed `pickle5==0.0.12` from `requirements.txt` line 232
+- Verified no other files reference pickle5 using grep
+- Updated CLAUDE.md with:
+  - New decision (DECISION-005) documenting pickle5 removal rationale
+  - This change log entry (CHANGE-005)
+- No code changes required - Python 3.14's native `pickle` module is drop-in replacement
+
+#### Testing
+- [x] Verified pickle5 removal from pyproject.toml
+- [x] Verified pickle5 removal from requirements.txt
+- [x] Confirmed no other references to pickle5 in codebase
+- [ ] Poetry install verification (to be done after commit)
+- [ ] Verify pickle functionality works with native module
+
+#### Risks & Challenges
+- Minimal risk - pickle5 is purely a backport for older Python versions
+- No code uses pickle5 explicitly; standard library `pickle` is used
+- Python 3.14.0 native pickle supports all protocols (0 through 5+)
+- No performance or functionality degradation expected
+
+#### Rollback Plan
+If issues arise (highly unlikely):
+1. Revert changes to pyproject.toml and requirements.txt via git
+2. Add Python version constraint if needed: `pickle5 = {version = "^0.0.12", python = "<3.8"}`
+3. However, this would still fail with Python 3.14, so downgrading Python would be required (not recommended)
+
+---
+
+### [CHANGE-006] - Migrate Development OS from Linux to Windows 11 Pro
+**Date**: 2025-11-15
+**Component**: Project Root / All Documentation
+**Type**: Documentation
+
+#### Reasoning
+Local development machine runs Windows 11 Pro, not Linux. All documentation and setup instructions need to reflect the actual development environment to ensure accuracy and prevent confusion when setting up IB API testing.
+
+#### Expected Outcome
+- All documentation accurately reflects Windows 11 Pro as the development OS
+- Installation instructions use PowerShell commands instead of bash
+- Directory paths use Windows conventions (backslash)
+- GPU/CUDA setup instructions are Windows-specific
+- IB Gateway/TWS installation instructions target Windows
+
+#### Implementation Details
+- Updated CLAUDE.md:
+  - Hardware Environment: Changed OS from "Linux (Ubuntu 22.04+)" to "Windows 11 Pro" (line 62)
+- Updated README.md:
+  - Hardware Specifications table: Changed OS to "Windows 11 Pro" (line 313)
+  - GPU Environment Setup: Converted all bash commands to PowerShell
+  - NVIDIA Driver installation: Updated to Windows download instructions
+  - CUDA Toolkit installation: Updated to Windows installer (.exe) instructions
+  - cuDNN installation: Updated to Windows ZIP extraction method
+  - PyTorch installation: Changed bash to powershell code blocks
+- Updated docs/IB_API_INTEGRATION_RESEARCH.md:
+  - TWS installation: Changed from Linux .sh installer to Windows .exe
+  - IB Gateway installation: Changed from Linux .sh installer to Windows .exe
+  - Python environment setup: Updated path from /home/user to C:\path\to
+  - Port verification: Changed netstat -tuln to PowerShell equivalents
+  - Directory creation: Changed mkdir -p to New-Item -ItemType Directory
+- Updated docs/QUICK_START_IB_RESEARCH.md:
+  - IB Gateway download: Changed from wget to Windows download instructions
+  - Test connection: Updated to PowerShell heredoc syntax (@"..."@)
+  - Project navigation: Changed from /home/user to C:\path\to
+  - Port check: Changed grep to findstr and PowerShell cmdlet
+  - File viewing: Changed cat to Get-Content, find to Get-ChildItem
+
+#### Testing
+- [x] Documentation review for consistency
+- [x] All code blocks updated to PowerShell
+- [x] All paths use Windows conventions
+- [ ] Verify instructions work on actual Windows 11 Pro machine
+- [ ] Test IB Gateway installation on Windows
+- [ ] Test CUDA/GPU setup on Windows
+
+#### Risks & Challenges
+- Some PowerShell commands may have different syntax across Windows versions
+- Windows firewall may require additional configuration for IB Gateway
+- CUDA installation on Windows may have different dependencies
+- File paths in tests may need updating for cross-platform compatibility
+
+#### Rollback Plan
+Can revert to Linux documentation via git:
+```bash
+git revert <commit-hash>
+```
+However, this would be misleading as the actual dev machine is Windows 11 Pro.
+
+---
+
+### [CHANGE-007] - Split CLAUDE.md into Focused Documentation Files
+**Date**: 2025-11-15
+**Component**: Project Root / Documentation
+**Type**: Refactor
+
+#### Reasoning
+CLAUDE.md grew to over 1,260 lines, becoming difficult to navigate and maintain. The file combined project overview, decisions, changes, risks, roadmap, and testing strategy into a single document. Following best practices for documentation organization, split into focused, single-purpose files.
+
+#### Expected Outcome
+- Easier navigation and information discovery
+- Reduced file sizes for faster loading
+- Clear separation of concerns (decisions vs changes vs risks)
+- Better maintainability with focused documentation
+- Preserved cross-references and relationships between documents
+
+#### Implementation Details
+- Created DECISIONS.md:
+  - All decision logs with context, options, consequences
+  - Decision template for future entries
+  - Decision statistics summary
+- Created CHANGES.md:
+  - All change logs with reasoning, implementation, testing
+  - Change template for future entries
+  - This change log entry (CHANGE-007)
+- Created RISKS.md:
+  - Risk register with mitigation and contingency plans
+  - Risk template for future entries
+  - Risk statistics and monitoring guidance
+- Created ROADMAP.md:
+  - All project phases (1-4) with objectives and deliverables
+  - Component structure specifications
+  - Next steps and immediate actions
+  - Success criteria for each phase
+- Created TESTING.md:
+  - Testing pyramid and strategy
+  - Unit, integration, and paper trading test requirements
+  - Validation metrics and success criteria
+  - Test coverage targets
+- Rewrote CLAUDE.md:
+  - Concise project overview
+  - Quick reference section
+  - Links to all specialized documentation
+  - Project status and key information
+  - Removed duplicated content now in specialized files
+- Updated all files with cross-references
+- Added "Documentation Home" links to each file
+- Updated README.md with new documentation structure
+
+#### Testing
+- [x] Created all new documentation files
+- [x] Verified cross-references and links
+- [ ] Review all files for consistency
+- [ ] Ensure no information was lost in split
+- [ ] Update other documentation references
+
+#### Risks & Challenges
+- Need to maintain synchronization between files
+- Developers must learn new documentation structure
+- Cross-references must remain accurate as files evolve
+- Search may require checking multiple files
+
+#### Rollback Plan
+Can restore original CLAUDE.md from git history:
+```bash
+git checkout <previous-commit> -- CLAUDE.md
+git rm DECISIONS.md CHANGES.md RISKS.md ROADMAP.md TESTING.md
+```
+
+---
+
+## Change Statistics
+
+**Total Changes**: 7
+**By Type**:
+- Documentation: 4
+- Feature: 1
+- Bugfix: 1
+- Refactor: 1
+
+**By Component**:
+- Project Root: 7
+- Configuration: 1
+- Dependencies: 1
+
+---
+
+**Last Updated**: 2025-11-15
+**Next Review**: 2025-11-22

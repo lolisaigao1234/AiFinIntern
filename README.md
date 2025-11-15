@@ -149,7 +149,12 @@ AiFinIntern/
 │   ├── historical/          # Historical market data
 │   └── cache/               # Cached data
 ├── Code/                    # Legacy code (to be migrated)
-├── CLAUDE.md                # Project memory & decision log
+├── CLAUDE.md                # Project documentation index
+├── DECISIONS.md             # Decision log with rationale
+├── CHANGES.md               # Implementation change log
+├── RISKS.md                 # Risk register
+├── ROADMAP.md               # Project phases and milestones
+├── TESTING.md               # Testing strategy
 ├── ARCHITECTURE.md          # Technical architecture spec
 ├── AGENTS.md                # AI agent specifications
 ├── README.md                # This file
@@ -802,10 +807,29 @@ poetry show --tree
 
 ## Documentation
 
-- **[CLAUDE.md](./CLAUDE.md)** - Project memory, decisions, and change log
-- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - Detailed technical architecture
-- **[AGENTS.md](./AGENTS.md)** - AI agent specifications and context management
-- **Component READMEs** - Detailed documentation for each component
+The project documentation is organized into focused, purpose-specific files:
+
+### Core Documentation
+- **[CLAUDE.md](./CLAUDE.md)** - 📋 Main documentation index and project overview
+- **[ROADMAP.md](./ROADMAP.md)** - 🗺️ Project phases, milestones, and component structure
+- **[DECISIONS.md](./DECISIONS.md)** - 🔑 All architectural and technical decisions with rationale
+- **[CHANGES.md](./CHANGES.md)** - 📝 Implementation change log with details and testing
+- **[RISKS.md](./RISKS.md)** - ⚠️ Risk register with mitigation strategies
+- **[TESTING.md](./TESTING.md)** - 🧪 Testing strategy and validation metrics
+
+### Technical Documentation
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - 🏗️ System architecture and technical specifications
+- **[AGENTS.md](./AGENTS.md)** - 🤖 AI agent hierarchy and specifications
+
+### Component Documentation
+Each component has its own README.md with detailed information:
+- `components/data_layer/README.md`
+- `components/strategy_layer/README.md`
+- `components/execution_layer/README.md`
+- `components/tax_recon/README.md`
+- `components/reporting/README.md`
+
+**Start here**: [CLAUDE.md](./CLAUDE.md) for a complete overview of all documentation.
 
 ---
 
