@@ -139,6 +139,64 @@ sentry-sdk = {version = "^2.0.0", extras = ["fastapi"]}
 
 ---
 
+### [CONFLICT-003] NVIDIA CUDA Runtime vs TensorFlow Version Mismatch
+
+**Date Identified**: 2025-11-15
+**Status**: ✅ RESOLVED
+**Severity**: HIGH (Blocking installation)
+
+#### Problem Description
+
+```
+Because tensorflow[and-cuda] (2.18.0) depends on nvidia-cuda-runtime-cu12 (12.5.82)
+and aifinintern depends on nvidia-cuda-runtime-cu12 (^12.6.0),
+version solving failed.
+
+TensorFlow 2.18-2.20 all require exactly nvidia-cuda-runtime-cu12 (12.5.82)
+but we specified ^12.6.0 which means >=12.6.0,<13.0.0
+```
+
+#### Root Cause
+
+- **tensorflow[and-cuda]** (2.18.0-2.20.0) requires exactly **nvidia-cuda-runtime-cu12 (12.5.82)** (pinned version)
+- **pyproject.toml** specified **nvidia-cuda-runtime-cu12 = "^12.6.0"** (which means >=12.6.0)
+- Poetry cannot find a compatible version that satisfies both constraints
+- TensorFlow has strict CUDA runtime version requirements for binary compatibility
+
+#### Resolution
+
+**Action**: Remove explicit nvidia-cuda-runtime-cu12 dependency and let TensorFlow manage it
+
+```toml
+# Before
+nvidia-cuda-runtime-cu12 = "^12.6.0"
+
+# After
+# Removed - TensorFlow manages this as a transitive dependency
+```
+
+**Rationale**:
+- TensorFlow has very specific CUDA runtime version requirements for binary compatibility
+- Allowing TensorFlow to manage its own CUDA runtime prevents version conflicts
+- TensorFlow will automatically install the correct nvidia-cuda-runtime-cu12 version (12.5.82)
+- This approach is more maintainable for future TensorFlow updates
+
+**Related Packages**:
+- `tensorflow[and-cuda] ^2.18.0` - Manages nvidia-cuda-runtime-cu12 (12.5.82)
+- `cupy-cuda12x ^13.3.0` - Compatible with CUDA 12.x runtime
+
+**Testing Required**:
+- [x] Poetry install succeeds
+- [ ] TensorFlow GPU operations work correctly
+- [ ] CUDA runtime version is compatible with RTX 5090
+- [ ] cupy-cuda12x works with TensorFlow's CUDA runtime
+
+**References**:
+- [TensorFlow GPU Support](https://www.tensorflow.org/install/gpu)
+- [NVIDIA CUDA Compatibility](https://docs.nvidia.com/deploy/cuda-compatibility/)
+
+---
+
 ## 📦 Critical Package Version Constraints
 
 ### Data Processing Stack
@@ -175,9 +233,37 @@ sentry-sdk = {version = "^2.0.0", extras = ["fastapi"]}
 | **sentry-sdk** | `^2.0.0` | Required by wandb >=0.18.7, FastAPI error tracking | wandb, fastapi |
 | **wandb** | `^0.18.7` | Experiment tracking and ML monitoring | sentry-sdk >=2.0.0 |
 
+### GPU Acceleration
+
+| Package | Version Constraint | Reason | Dependencies |
+|---------|-------------------|---------|--------------|
+| **tensorflow[and-cuda]** | `^2.18.0` | Manages CUDA runtime (12.5.82) automatically | nvidia-cuda-runtime-cu12 |
+| **cupy-cuda12x** | `^13.3.0` | GPU-accelerated array library for CUDA 12.x | - |
+| **nvidia-cuda-runtime-cu12** | (managed) | Installed by TensorFlow (version 12.5.82) | - |
+
+**Note**: Do not explicitly install nvidia-cuda-runtime-cu12. TensorFlow manages this dependency with pinned version requirements for binary compatibility.
+
 ---
 
 ## 🔄 Dependency Upgrade History
+
+### 2025-11-15: Remove nvidia-cuda-runtime-cu12 Explicit Dependency
+
+**Trigger**: Poetry dependency resolution failure with tensorflow[and-cuda] ^2.18.0
+**Impact**: LOW - TensorFlow manages CUDA runtime as transitive dependency
+**Migration Steps**: Removed nvidia-cuda-runtime-cu12 from [tool.poetry.dependencies]
+**Rollback Plan**: Re-add with pinned version if compatibility issues arise
+
+**Changed Files**:
+- `pyproject.toml` - Removed nvidia-cuda-runtime-cu12 explicit dependency
+
+**Testing Checklist**:
+- [x] Poetry install succeeds
+- [ ] TensorFlow GPU operations work
+- [ ] CUDA runtime compatible with RTX 5090
+- [ ] cupy-cuda12x works correctly
+
+---
 
 ### 2025-11-15: Migrate pyproject.toml to PEP 621 Standard
 
@@ -507,14 +593,14 @@ When encountering a new dependency conflict:
 
 **Last Full Update**: 2025-11-15
 **Total Dependencies**: 100+
-**Direct Dependencies**: 80+
+**Direct Dependencies**: 79 (removed nvidia-cuda-runtime-cu12)
 **Dev Dependencies**: 20+
-**Known Conflicts**: 2 (all resolved)
+**Known Conflicts**: 3 (all resolved)
 **Python Version**: 3.14.0
 **Poetry Version**: Latest stable
 
 ---
 
-**Document Version**: 1.1
+**Document Version**: 1.2
 **Next Review**: 2025-11-22
 **Maintained By**: Project Team

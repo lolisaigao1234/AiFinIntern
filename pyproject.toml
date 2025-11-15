@@ -173,8 +173,8 @@ distro = "^1.8.0"
 
 # GPU Acceleration (CUDA 13.0)
 # NOTE: Ensure NVIDIA driver supports CUDA 13.0+ for RTX 5090
+# NOTE: nvidia-cuda-runtime-cu12 is managed by TensorFlow (requires specific version)
 cupy-cuda12x = "^13.3.0"
-nvidia-cuda-runtime-cu12 = "^12.6.0"
 
 [tool.poetry.group.dev.dependencies]
 # Testing
