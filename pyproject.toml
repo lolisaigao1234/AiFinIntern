@@ -33,11 +33,11 @@ scipy = "^1.11.4"
 ta-lib = "^0.4.28"
 
 # Deep Learning Frameworks
-# NOTE: PyTorch with CUDA must be installed separately with:
-#   poetry run pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
-torch = {version = "^2.5.1", source = "pytorch-cu121", optional = true}
-torchvision = {version = "^0.20.1", source = "pytorch-cu121", optional = true}
-torchaudio = {version = "^2.5.1", source = "pytorch-cu121", optional = true}
+# NOTE: PyTorch with CUDA 13.0 must be installed separately with:
+#   pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu130
+torch = {version = ">=2.6.0", source = "pytorch-cu130", optional = true}
+torchvision = {version = ">=0.21.0", source = "pytorch-cu130", optional = true}
+torchaudio = {version = ">=2.6.0", source = "pytorch-cu130", optional = true}
 tensorflow = {version = "^2.18.0", extras = ["and-cuda"]}
 
 # Hugging Face Ecosystem
@@ -52,12 +52,6 @@ sentencepiece = "^0.2.0"
 protobuf = "^5.28.3"
 bitsandbytes = "^0.44.1"
 peft = "^0.13.2"
-
-# Traditional ML
-scikit-learn = "^1.6.0"
-xgboost = "^2.1.3"
-lightgbm = "^4.5.0"
-catboost = "^1.2.7"
 
 # Model Utilities
 joblib = "^1.4.2"
@@ -166,7 +160,8 @@ python-magic = "^0.4.27"
 psutil = "^5.9.6"
 distro = "^1.8.0"
 
-# GPU Acceleration (CUDA)
+# GPU Acceleration (CUDA 13.0)
+# NOTE: Ensure NVIDIA driver supports CUDA 13.0+ for RTX 5090
 cupy-cuda12x = "^13.3.0"
 nvidia-cuda-runtime-cu12 = "^12.6.0"
 
@@ -227,8 +222,8 @@ jupyter = ["jupyter", "jupyterlab", "notebook", "ipywidgets"]
 all = ["torch", "torchvision", "torchaudio", "jupyter", "jupyterlab", "notebook", "ipywidgets"]
 
 [[tool.poetry.source]]
-name = "pytorch-cu121"
-url = "https://download.pytorch.org/whl/cu121"
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
 priority = "explicit"
 
 [build-system]

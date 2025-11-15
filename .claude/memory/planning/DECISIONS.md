@@ -371,17 +371,77 @@ CLAUDE.md grew to over 1,260 lines, becoming difficult to navigate and maintain.
 
 ---
 
+### [DECISION-008] - Upgrade to PyTorch with CUDA 13.0 and Remove Traditional ML Packages
+**Date**: 2025-11-15
+**Status**: Accepted ✅
+**Decider**: Project Team
+
+#### Context
+The project was configured with PyTorch 2.5.1 using CUDA 12.1 (cu121), which is outdated for the NVIDIA RTX 5090 GPU that supports CUDA 13.0. Additionally, the dependency specification used strict versioning (`^2.5.1`), causing Poetry resolution conflicts. The project also included traditional ML packages (scikit-learn, xgboost, lightgbm, catboost) that are not applicable for the complex financial time-series data analysis required.
+
+#### Options Considered
+1. **Keep cu121 and strict versioning** - Outdated, causes compatibility issues
+2. **Upgrade to cu130 with flexible versioning** - Optimal for RTX 5090, reduces conflicts
+3. **Keep traditional ML packages** - Unnecessary dependencies, bloat
+4. **Remove traditional ML packages** - Cleaner dependencies, focus on deep learning
+
+#### Decision
+1. **Upgrade PyTorch to CUDA 13.0** using the latest PyTorch (>=2.6.0) with flexible versioning (>= instead of ^)
+2. **Remove traditional ML packages** (scikit-learn, xgboost, lightgbm, catboost) as they are not applicable for complex financial data
+3. **Update Poetry source** from cu121 to cu130
+4. **Use flexible versioning** (>=) to avoid Poetry dependency resolution conflicts
+
+#### Consequences
+**Positive**:
+- Full CUDA 13.0 support for NVIDIA RTX 5090 GPU
+- Latest PyTorch features and performance improvements
+- Reduced dependency conflicts with flexible versioning
+- Cleaner dependency tree without unnecessary traditional ML packages
+- Better compatibility with Python 3.14.0 and Conda environment
+- Reduced installation size and complexity
+- Focus on deep learning approaches suitable for complex financial data
+
+**Negative**:
+- May introduce breaking changes from newer PyTorch versions
+- Need to verify all deep learning code works with >=2.6.0
+- Less predictable builds with flexible versioning (mitigated by poetry.lock)
+- Loss of traditional ML fallback options (acceptable given data complexity)
+
+#### Implementation Notes
+- Update pyproject.toml:
+  - Change PyTorch source: `pytorch-cu121` → `pytorch-cu130`
+  - Update torch version: `^2.5.1` → `>=2.6.0`
+  - Update torchvision: `^0.20.1` → `>=0.21.0`
+  - Update torchaudio: `^2.5.1` → `>=2.6.0`
+  - Update source URL: `cu121` → `cu130`
+  - Remove: scikit-learn, xgboost, lightgbm, catboost
+- Installation command: `pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu130`
+- Verify NVIDIA driver supports CUDA 13.0+ (RTX 5090 requires latest drivers)
+- Run `poetry lock --no-update` to update lockfile
+- Test GPU detection: `python -c "import torch; print(torch.cuda.is_available())"`
+- Update all memory documentation to reflect changes
+
+**System Specifications**:
+- GPU: NVIDIA RTX 5090 Founders Edition (24GB VRAM)
+- CPU: AMD Ryzen 7 7700X (8 cores, 16 threads)
+- RAM: 32GB DDR5
+- OS: Windows 11 Pro
+- Python: 3.14.0 (Conda environment)
+- CUDA: 13.0
+
+---
+
 ## Decision Statistics
 
-**Total Decisions**: 6
-**Accepted**: 5
+**Total Decisions**: 8
+**Accepted**: 7
 **Superseded**: 1
 **Rejected**: 0
 **Proposed**: 0
 
 **By Category**:
 - Documentation: 2
-- Technology Stack: 3
+- Technology Stack: 5
 - Development Process: 1
 
 ---
