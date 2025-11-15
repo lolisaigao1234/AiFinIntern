@@ -1071,9 +1071,13 @@ Each agent subdirectory contains focused documentation:
 4. [x] Create ARCHITECTURE.md with technical specifications
 5. [x] Create AGENTS.md with agent hierarchy and specifications
 6. [x] Configure Poetry for dependency management
-7. [ ] Review existing Code/order.py and Code/test.py
-8. [ ] Document current IB API integration status
-9. [ ] Set up development environment with dependencies
+7. [x] Review existing Code/order.py and Code/test.py
+8. [x] Document current IB API integration status
+9. [x] Create IB API Integration Research Guide
+10. [x] Create IB API research directory structure
+11. [x] Define API Client Research Agent specification
+12. [ ] Set up IB Gateway/TWS for testing
+13. [ ] Run initial IB API connection tests
 
 ### Week 1 Goals
 1. [ ] Complete Interactive Brokers API research
