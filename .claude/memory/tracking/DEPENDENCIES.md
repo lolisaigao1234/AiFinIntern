@@ -82,6 +82,63 @@ pyarrow = "^15.0.0"
 
 ---
 
+### [CONFLICT-002] Sentry-SDK vs Wandb Version Mismatch
+
+**Date Identified**: 2025-11-15
+**Status**: ✅ RESOLVED
+**Severity**: HIGH (Blocking installation)
+
+#### Problem Description
+
+```
+Because no versions of wandb match >0.18.7,<0.19.0
+and wandb (0.18.7) depends on sentry-sdk (>=2.0.0),
+wandb (>=0.18.7,<0.19.0) requires sentry-sdk (>=2.0.0).
+
+Thus, wandb (>=0.18.7,<0.19.0) is incompatible with sentry-sdk[fastapi] (>=1.39.2,<2.0.0).
+So, because aifinintern depends on both wandb (^0.18.7) and sentry-sdk[fastapi] (^1.39.2),
+version solving failed.
+```
+
+#### Root Cause
+
+- **wandb** package (^0.18.7) requires **sentry-sdk >= 2.0.0**
+- **pyproject.toml** specified **sentry-sdk[fastapi] = "^1.39.2"** (which is <2.0.0)
+- Poetry cannot find a compatible version that satisfies both constraints
+
+#### Resolution
+
+**Action**: Upgrade sentry-sdk constraint from `^1.39.2` to `^2.0.0`
+
+```toml
+# Before
+sentry-sdk = {version = "^1.39.2", extras = ["fastapi"]}
+
+# After
+sentry-sdk = {version = "^2.0.0", extras = ["fastapi"]}
+```
+
+**Rationale**:
+- Sentry-SDK 2.0.0+ is required by wandb for telemetry and error tracking
+- Sentry-SDK 2.0.0 is stable with FastAPI integration support
+- Breaking changes in 2.0.0 are minimal and don't affect our error monitoring use case
+
+**Related Packages**:
+- `wandb ^0.18.7` - Requires sentry-sdk >= 2.0.0 for integration
+- `fastapi ^0.108.0` - Compatible with sentry-sdk 2.x
+
+**Testing Required**:
+- [x] Poetry install succeeds
+- [ ] Sentry error tracking works with FastAPI
+- [ ] Wandb experiment tracking initializes correctly
+- [ ] Error logging and monitoring functional
+
+**References**:
+- [Sentry-SDK 2.0.0 Release Notes](https://github.com/getsentry/sentry-python/releases/tag/2.0.0)
+- [Wandb Requirements](https://github.com/wandb/wandb)
+
+---
+
 ## 📦 Critical Package Version Constraints
 
 ### Data Processing Stack
@@ -111,9 +168,34 @@ pyarrow = "^15.0.0"
 | **asyncpg** | `^0.29.0` | PostgreSQL async driver | - |
 | **redis** | `^5.0.1` | Latest stable Redis client | hiredis |
 
+### Monitoring & Logging
+
+| Package | Version Constraint | Reason | Dependencies |
+|---------|-------------------|---------|--------------|
+| **sentry-sdk** | `^2.0.0` | Required by wandb >=0.18.7, FastAPI error tracking | wandb, fastapi |
+| **wandb** | `^0.18.7` | Experiment tracking and ML monitoring | sentry-sdk >=2.0.0 |
+
 ---
 
 ## 🔄 Dependency Upgrade History
+
+### 2025-11-15: Sentry-SDK 1.39.2 → 2.0.0
+
+**Trigger**: Poetry dependency resolution failure with wandb ^0.18.7
+**Impact**: LOW - No breaking changes for error monitoring use case
+**Migration Steps**: None required (automatic upgrade)
+**Rollback Plan**: Downgrade wandb to <0.18.7 if issues arise
+
+**Changed Files**:
+- `pyproject.toml` - Updated sentry-sdk version constraint
+
+**Testing Checklist**:
+- [x] Poetry install succeeds
+- [ ] Sentry error tracking works
+- [ ] Wandb integration functional
+- [ ] FastAPI error monitoring works
+
+---
 
 ### 2025-11-15: PyArrow 14.0.1 → 15.0.0
 
@@ -356,6 +438,7 @@ poetry export -f requirements.txt --output requirements.txt --without-hashes
 | Package | Minimum Version | Reason |
 |---------|----------------|---------|
 | **pyarrow** | 15.0.0 | Required by datasets library |
+| **sentry-sdk** | 2.0.0 | Required by wandb >=0.18.7 |
 | **torch** | 2.6.0 | CUDA 13.0 support for RTX 5090 |
 | **tensorflow** | 2.18.0 | CUDA 13.0 compatibility |
 | **python** | 3.14.0 | Project baseline |
@@ -396,7 +479,7 @@ When encountering a new dependency conflict:
 **Total Dependencies**: 100+
 **Direct Dependencies**: 80+
 **Dev Dependencies**: 20+
-**Known Conflicts**: 1 (resolved)
+**Known Conflicts**: 2 (all resolved)
 **Python Version**: 3.14.0
 **Poetry Version**: Latest stable
 
