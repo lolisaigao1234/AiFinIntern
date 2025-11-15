@@ -2,7 +2,8 @@
 
 **Project**: AI-Driven Tax and Portfolio Reconciliation System
 **Last Updated**: 2025-11-15
-**Documentation Home**: [CLAUDE.md](./CLAUDE.md)
+**Documentation Home**: [CLAUDE.md](../../../CLAUDE.md)
+**Location**: `.claude/memory/planning/DECISIONS.md`
 
 ---
 
@@ -11,8 +12,8 @@
 This document tracks all major architectural and technical decisions made during the project lifecycle. Each decision follows a structured format to capture the context, options considered, rationale, and consequences.
 
 **Related Documentation**:
-- [CLAUDE.md](./CLAUDE.md) - Main project overview
-- [CHANGES.md](./CHANGES.md) - Implementation change log
+- [CLAUDE.md](../../../CLAUDE.md) - Main project overview and index
+- [CHANGES.md](../tracking/CHANGES.md) - Implementation change log
 - [RISKS.md](./RISKS.md) - Risk register
 - [ROADMAP.md](./ROADMAP.md) - Project phases and milestones
 
@@ -53,6 +54,71 @@ This document tracks all major architectural and technical decisions made during
 ---
 
 ## Decisions
+
+### [DECISION-007] - Restructure Project Documentation into .claude/memory Directory
+**Date**: 2025-11-15
+**Status**: Accepted ✅
+**Decider**: Project Team
+
+#### Context
+The project root directory had become cluttered with numerous markdown documentation files (CLAUDE.md, DECISIONS.md, CHANGES.md, RISKS.md, ROADMAP.md, TESTING.md, ARCHITECTURE.md, AGENTS.md) plus the docs/ directory and Code/ sample directory. This made the project structure messy and difficult to navigate.
+
+#### Options Considered
+1. **Keep current structure** - Leave all files in root directory
+2. **Move to docs/** - Put all markdown files in docs/ directory
+3. **Create .claude/memory/** - Create a dedicated .claude/ directory with organized subdirectories
+4. **Move to hidden .project/** - Use a different hidden directory name
+
+#### Decision
+Restructure all project documentation into `.claude/memory/` directory with the following organization:
+- `.claude/memory/planning/` - Strategic planning documents (ROADMAP, DECISIONS, RISKS)
+- `.claude/memory/tracking/` - Progress tracking (CHANGES, TESTING)
+- `.claude/memory/architecture/` - Technical architecture (ARCHITECTURE, AGENTS)
+- `.claude/memory/research/` - Research documentation organized by topic
+- `.claude/memory/guides/` - Installation and setup guides
+- `.claude/samples/` - Sample code and testbeds
+
+Keep only README.md and CLAUDE.md (as index) in the root directory.
+
+#### Consequences
+**Positive**:
+- Clean, organized project structure
+- Clear separation of documentation by purpose
+- Better discoverability of related documents
+- Cleaner main directory (only README.md, CLAUDE.md, and config files)
+- Easier to navigate and maintain documentation
+- Follows convention of using hidden directories for tooling-specific files
+- Sample code separated from documentation
+
+**Negative**:
+- Existing links and references need to be updated
+- Slightly longer paths to documentation files
+- May require updating CI/CD scripts if they reference old paths
+- Users need to learn new structure
+
+#### Implementation Notes
+- Update all cross-references in documentation files to use relative paths
+- Update CLAUDE.md to serve as main documentation index with new paths
+- Ensure git history is preserved during file moves
+- Update README.md if it references any moved files
+- Create a migration note in CHANGES.md
+
+**Migration Checklist**:
+- [x] Create .claude/memory directory structure
+- [x] Move planning documents (ROADMAP, DECISIONS, RISKS)
+- [x] Move tracking documents (CHANGES, TESTING)
+- [x] Move architecture documents (ARCHITECTURE, AGENTS)
+- [x] Move research documentation
+- [x] Move setup guides
+- [x] Move sample code to .claude/samples/
+- [x] Update CLAUDE.md with new structure and paths
+- [x] Update cross-references in all moved documents
+- [x] Remove empty docs/ and Code/ directories
+- [x] Update this DECISIONS.md file
+- [ ] Update CHANGES.md with migration entry
+- [ ] Commit and push changes
+
+---
 
 ### [DECISION-001] - CLAUDE.md as Main Memory File
 **Date**: 2025-11-15

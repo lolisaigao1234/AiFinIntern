@@ -2,7 +2,8 @@
 
 **Project**: AI-Driven Tax and Portfolio Reconciliation System
 **Last Updated**: 2025-11-15
-**Documentation Home**: [CLAUDE.md](./CLAUDE.md)
+**Documentation Home**: [CLAUDE.md](../../../CLAUDE.md)
+**Location**: `.claude/memory/planning/RISKS.md`
 
 ---
 
@@ -11,9 +12,9 @@
 This document tracks all identified risks, their mitigation strategies, contingency plans, and current status. Risks are categorized by type, probability, and impact to help prioritize mitigation efforts.
 
 **Related Documentation**:
-- [CLAUDE.md](./CLAUDE.md) - Main project overview
+- [CLAUDE.md](../../../CLAUDE.md) - Main project overview and index
 - [DECISIONS.md](./DECISIONS.md) - Decision log
-- [CHANGES.md](./CHANGES.md) - Change log
+- [CHANGES.md](../tracking/CHANGES.md) - Change log
 - [ROADMAP.md](./ROADMAP.md) - Project phases and milestones
 
 ---

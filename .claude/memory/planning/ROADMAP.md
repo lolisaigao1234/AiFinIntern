@@ -2,7 +2,8 @@
 
 **Project**: AI-Driven Tax and Portfolio Reconciliation System
 **Last Updated**: 2025-11-15
-**Documentation Home**: [CLAUDE.md](./CLAUDE.md)
+**Documentation Home**: [CLAUDE.md](../../../CLAUDE.md)
+**Location**: `.claude/memory/planning/ROADMAP.md`
 
 ---
 
@@ -11,11 +12,11 @@
 This document outlines the project development roadmap, including all phases, milestones, component structure, and next steps. The project follows a 4-phase approach spanning approximately 10 weeks.
 
 **Related Documentation**:
-- [CLAUDE.md](./CLAUDE.md) - Main project overview
+- [CLAUDE.md](../../../CLAUDE.md) - Main project overview and index
 - [DECISIONS.md](./DECISIONS.md) - Decision log
-- [CHANGES.md](./CHANGES.md) - Change log
+- [CHANGES.md](../tracking/CHANGES.md) - Change log
 - [RISKS.md](./RISKS.md) - Risk register
-- [TESTING.md](./TESTING.md) - Testing strategy
+- [TESTING.md](../tracking/TESTING.md) - Testing strategy
 
 ---
 
