@@ -28,7 +28,7 @@ ibapi = "^9.81.1"
 pandas = "^2.1.4"
 numpy = "^1.26.2"
 polars = "^0.19.19"
-pyarrow = "^14.0.1"
+pyarrow = "^15.0.0"
 scipy = "^1.11.4"
 ta-lib = "^0.4.28"
 
@@ -218,8 +218,6 @@ ipywidgets = "^8.1.1"
 
 [tool.poetry.extras]
 cuda = ["torch", "torchvision", "torchaudio"]
-jupyter = ["jupyter", "jupyterlab", "notebook", "ipywidgets"]
-all = ["torch", "torchvision", "torchaudio", "jupyter", "jupyterlab", "notebook", "ipywidgets"]
 
 [[tool.poetry.source]]
 name = "pytorch-cu130"
