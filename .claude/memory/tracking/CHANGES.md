@@ -53,6 +53,92 @@ This document tracks all significant changes, implementations, and modifications
 
 ## Changes
 
+### [CHANGE-009] - Upgrade PyTorch to CUDA 13.0 and Remove Traditional ML Packages
+**Date**: 2025-11-15
+**Component**: Dependencies / pyproject.toml
+**Type**: Feature
+
+#### Reasoning
+The project was using PyTorch 2.5.1 with CUDA 12.1 (cu121), which is outdated for the NVIDIA RTX 5090 GPU. The RTX 5090 supports CUDA 13.0, providing better performance and compatibility. Additionally, strict versioning (`^2.5.1`) was causing Poetry dependency resolution conflicts. Traditional ML packages (scikit-learn, xgboost, lightgbm, catboost) were included but are not applicable for the complex financial time-series data that requires deep learning approaches.
+
+#### Expected Outcome
+- Full CUDA 13.0 support for optimal RTX 5090 performance
+- Resolved Poetry dependency conflicts with flexible versioning
+- Cleaner dependency tree focused on deep learning
+- Reduced installation size and complexity
+- Better compatibility with Python 3.14.0 and Conda environment
+- Successful `poetry install` execution without version conflicts
+
+#### Implementation Details
+**pyproject.toml Updates**:
+- **PyTorch Source**: Changed from `pytorch-cu121` to `pytorch-cu130`
+- **PyTorch Versions**:
+  - torch: `^2.5.1` → `>=2.6.0`
+  - torchvision: `^0.20.1` → `>=0.21.0`
+  - torchaudio: `^2.5.1` → `>=2.6.0`
+- **Source URL**: `https://download.pytorch.org/whl/cu121` → `https://download.pytorch.org/whl/cu130`
+- **Removed Packages**:
+  - scikit-learn = "^1.6.0"
+  - xgboost = "^2.1.3"
+  - lightgbm = "^4.5.0"
+  - catboost = "^1.2.7"
+- **Installation Command**: Updated to `pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu130`
+- **CUDA Comment**: Added note about NVIDIA driver support for CUDA 13.0+ on RTX 5090
+
+**Memory Documentation Updates**:
+- Added [DECISION-008] to `.claude/memory/planning/DECISIONS.md`
+- Added [CHANGE-009] to `.claude/memory/tracking/CHANGES.md`
+- Updated CLAUDE.md technology stack section
+- Updated system specifications to reflect CUDA 13.0
+
+**Rationale for Removing Traditional ML**:
+- Complex financial time-series data requires sophisticated deep learning models
+- Traditional ML (decision trees, gradient boosting) not suitable for sequential, temporal patterns
+- Focus on transformer-based models (FinBERT, TimesNet) and LSTM/GRU architectures
+- Reduced dependency bloat and installation complexity
+
+#### Testing
+- [ ] Run `poetry install` to verify dependency resolution
+- [ ] Test PyTorch CUDA 13.0 installation
+- [ ] Verify GPU detection: `python -c "import torch; print(torch.cuda.is_available())"`
+- [ ] Verify CUDA version: `python -c "import torch; print(torch.version.cuda)"`
+- [ ] Test basic tensor operations on GPU
+- [ ] Verify Hugging Face transformers compatibility with new PyTorch
+- [ ] Run existing unit tests (if any)
+- [ ] Check poetry lock file generation
+
+#### Risks & Challenges
+- **PyTorch 2.6.0+ Breaking Changes**: New version may introduce API changes
+  - *Mitigation*: Review PyTorch changelog, test thoroughly before deployment
+- **NVIDIA Driver Requirements**: CUDA 13.0 requires latest drivers for RTX 5090
+  - *Mitigation*: Document driver version requirements, provide installation guide
+- **Flexible Versioning**: `>=` may pull untested versions in future
+  - *Mitigation*: Use poetry.lock for deterministic builds, test before updating
+- **Traditional ML Removal**: Loss of fallback ML options
+  - *Mitigation*: Acceptable given deep learning focus, can re-add if needed
+- **Poetry Resolution**: Flexible versioning may cause future conflicts
+  - *Mitigation*: Regular testing, lock file commits to repository
+
+#### Rollback Plan
+If issues arise:
+1. Revert pyproject.toml changes via git:
+   ```bash
+   git checkout HEAD~1 -- pyproject.toml
+   ```
+2. Restore cu121 configuration and traditional ML packages
+3. Run `poetry lock --no-update` and `poetry install`
+4. Alternative: Keep cu130 but add version caps if specific issues found
+
+**System Environment**:
+- GPU: NVIDIA RTX 5090 FE (24GB VRAM)
+- CPU: AMD Ryzen 7 7700X
+- RAM: 32GB DDR5
+- OS: Windows 11 Pro
+- Python: 3.14.0 (Conda environment: AiFin)
+- CUDA: 13.0
+
+---
+
 ### [CHANGE-008] - Restructure Project Documentation into .claude/memory Directory
 **Date**: 2025-11-15
 **Component**: Project Structure / Documentation
@@ -507,17 +593,18 @@ git rm DECISIONS.md CHANGES.md RISKS.md ROADMAP.md TESTING.md
 
 ## Change Statistics
 
-**Total Changes**: 7
+**Total Changes**: 9
 **By Type**:
 - Documentation: 4
-- Feature: 1
+- Feature: 2
 - Bugfix: 1
-- Refactor: 1
+- Refactor: 2
 
 **By Component**:
 - Project Root: 7
 - Configuration: 1
-- Dependencies: 1
+- Dependencies: 2
+- Project Structure: 1
 
 ---
 

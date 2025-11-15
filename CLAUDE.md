@@ -118,10 +118,11 @@ Build an AI-driven quantitative trading bot that:
 - **Web Framework**: FastAPI with Uvicorn
 
 ### Machine Learning
-- **Frameworks**: PyTorch (CUDA), TensorFlow (GPU), scikit-learn
+- **Frameworks**: PyTorch (CUDA 13.0), TensorFlow (GPU)
 - **Models**: Hugging Face Transformers (FinBERT, TimesNet)
 - **Strategy**: Fine-tuning pre-trained models (NOT training from scratch)
-- **GPU**: NVIDIA RTX 5090 (24GB VRAM) with CUDA 12.x
+- **GPU**: NVIDIA RTX 5090 (24GB VRAM) with CUDA 13.0
+- **Note**: Traditional ML packages removed (focus on deep learning for complex financial data)
 
 ### Data Processing
 - **Libraries**: Pandas, NumPy, Polars
@@ -145,7 +146,8 @@ Local development machine specifications:
 | **GPU** | NVIDIA RTX 5090 Founders Edition (24GB VRAM) |
 | **RAM** | 32GB DDR5 |
 | **OS** | Windows 11 Pro |
-| **CUDA** | 12.x with cuDNN 8.9+ |
+| **CUDA** | 13.0 with cuDNN 8.9+ |
+| **Python** | 3.14.0 (Conda environment: AiFin) |
 
 ---
 
@@ -214,11 +216,11 @@ Local development machine specifications:
 
 Latest architectural and technical decisions:
 
-1. **[DECISION-007]** - Restructure project documentation into .claude/memory directory ✅
-2. **[DECISION-006]** - Split CLAUDE.md into focused documentation files ✅
-3. **[DECISION-005]** - Remove pickle5 dependency (Python 3.14 compatibility) ✅
-4. **[DECISION-004]** - Use Poetry for dependency management ✅
-5. **[DECISION-003]** - Local development with NVIDIA RTX 5090 ✅
+1. **[DECISION-008]** - Upgrade to PyTorch with CUDA 13.0 and remove traditional ML packages ✅
+2. **[DECISION-007]** - Restructure project documentation into .claude/memory directory ✅
+3. **[DECISION-006]** - Split CLAUDE.md into focused documentation files ✅
+4. **[DECISION-005]** - Remove pickle5 dependency (Python 3.14 compatibility) ✅
+5. **[DECISION-004]** - Use Poetry for dependency management ✅
 
 **For complete decision log**: See [DECISIONS.md](./.claude/memory/planning/DECISIONS.md)
 
@@ -228,10 +230,10 @@ Latest architectural and technical decisions:
 
 Latest implementation changes:
 
-1. **[CHANGE-008]** - Restructure project documentation into organized .claude/memory directory (2025-11-15)
-2. **[CHANGE-007]** - Split CLAUDE.md into focused documentation files (2025-11-15)
-3. **[CHANGE-006]** - Migrate development OS to Windows 11 Pro (2025-11-15)
-4. **[CHANGE-005]** - Remove pickle5 dependency (2025-11-15)
+1. **[CHANGE-009]** - Upgrade PyTorch to CUDA 13.0 and remove traditional ML packages (2025-11-15)
+2. **[CHANGE-008]** - Restructure project documentation into organized .claude/memory directory (2025-11-15)
+3. **[CHANGE-007]** - Split CLAUDE.md into focused documentation files (2025-11-15)
+4. **[CHANGE-006]** - Migrate development OS to Windows 11 Pro (2025-11-15)
 
 **For complete change log**: See [CHANGES.md](./.claude/memory/tracking/CHANGES.md)
 
