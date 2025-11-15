@@ -43,6 +43,7 @@ Build an AI-driven quantitative trading bot that:
 
 ### Technology Stack
 - **Language**: Python 3.14.0
+- **Dependency Management**: Poetry (with pyproject.toml)
 - **Trading API**: Interactive Brokers (TWS API / ibapi)
 - **Data Processing**: Pandas, NumPy, Polars
 - **Machine Learning**: PyTorch (CUDA), TensorFlow (GPU), scikit-learn, XGBoost
@@ -50,6 +51,7 @@ Build an AI-driven quantitative trading bot that:
 - **GPU Acceleration**: CUDA 12.x, cuDNN 8.9+, NVIDIA RTX 5090 (24GB VRAM)
 - **Database**: PostgreSQL 15+ with TimescaleDB extension
 - **Caching**: Redis 7+
+- **Web Framework**: FastAPI with Uvicorn
 - **AI Assistance**: ChatGPT/Claude for tax interpretation
 - **Testing**: pytest, unittest, pytest-asyncio
 
@@ -559,6 +561,54 @@ Optimize for **local development using NVIDIA RTX 5090** with full CUDA, PyTorch
 
 ---
 
+### [DECISION-004] - Poetry for Dependency Management
+**Date**: 2025-11-15
+**Status**: Accepted
+**Decider**: Project Team
+
+#### Context
+Need a robust, modern dependency management solution for Python 3.14.0 project with complex dependencies including CUDA-enabled ML frameworks, multiple package sources (PyPI, PyTorch repos), and development/production separation.
+
+#### Options Considered
+1. pip with requirements.txt - Traditional approach, simple but limited
+2. Poetry - Modern dependency management with lock files
+3. Pipenv - Alternative to Poetry, less actively maintained
+4. Conda - Heavy, primarily for data science, complex with pip packages
+
+#### Decision
+Use **Poetry** as the primary dependency management tool with pyproject.toml configuration.
+
+#### Consequences
+**Positive**:
+- Deterministic builds with poetry.lock file
+- Clear separation of development and production dependencies
+- Better dependency resolution and conflict detection
+- Modern pyproject.toml standard (PEP 518)
+- Built-in virtual environment management
+- Support for private package repositories
+- Easier version management and updates
+- Optional dependency groups (jupyter, cuda extras)
+- Integration with modern Python tooling (black, ruff, mypy)
+
+**Negative**:
+- Additional tool to learn for team members
+- Slightly slower than pure pip installations
+- Some edge cases with CUDA packages require pip fallback
+- Poetry lock file adds repository size
+- May need pip for some specialized packages (PyTorch CUDA wheels)
+
+#### Implementation Notes
+- Create comprehensive pyproject.toml with all dependencies
+- Use poetry extras for optional dependencies (cuda, jupyter)
+- Configure PyTorch CUDA installation as separate pip step
+- Set up dependency groups: main, dev, jupyter
+- Configure all tooling (black, ruff, mypy, pytest) in pyproject.toml
+- Keep requirements.txt as fallback for pip-only environments
+- Document Poetry installation and usage in README.md
+- Use poetry.lock for reproducible builds (commit to repository)
+
+---
+
 ## Change Log
 
 ### Change Template
@@ -731,6 +781,68 @@ Need to document local development hardware specifications, ML fine-tuning appro
 
 #### Rollback Plan
 Can revert to cloud-based GPU training if local setup proves problematic. Documentation changes can be reverted via git.
+
+---
+
+### [CHANGE-004] - Poetry Configuration and Dependency Management
+**Date**: 2025-11-15
+**Component**: Project Root / Configuration
+**Type**: Feature
+
+#### Reasoning
+Need modern dependency management with deterministic builds, better dependency resolution, and clear separation between development and production dependencies. Traditional requirements.txt approach lacks lock file support and proper dependency group management.
+
+#### Expected Outcome
+- Reproducible builds across all development environments
+- Simplified dependency installation and management
+- Better tooling integration (black, ruff, mypy, pytest)
+- Clear documentation for new developers
+- Optional dependency groups for CUDA and Jupyter
+
+#### Implementation Details
+- Created comprehensive `pyproject.toml` with:
+  - All production dependencies from requirements.txt
+  - Separated development dependencies (testing, linting, profiling)
+  - Optional dependency groups (cuda, jupyter)
+  - Complete tool configuration (black, ruff, mypy, pytest, isort, coverage)
+  - PyTorch CUDA repository configuration
+  - Project metadata and entry points
+- Updated README.md with:
+  - Poetry installation instructions
+  - Step-by-step dependency installation guide
+  - Poetry command examples for testing, formatting, linting
+  - GPU verification commands
+  - Dependency management workflows
+  - Added Poetry badge to README
+- Updated CLAUDE.md with:
+  - New decision (DECISION-004) documenting Poetry adoption
+  - This change log entry (CHANGE-004)
+- Preserved requirements.txt as fallback for pip-only environments
+- Configured Poetry extras:
+  - `cuda` - PyTorch with CUDA support
+  - `jupyter` - Jupyter notebook environment
+  - `all` - All optional dependencies
+
+#### Testing
+- [ ] Poetry install verification
+- [ ] Dependency resolution testing
+- [ ] CUDA package installation testing
+- [ ] Tool configuration validation (black, ruff, mypy)
+- [ ] Virtual environment creation
+- [ ] Lock file generation
+
+#### Risks & Challenges
+- Poetry may have issues with PyTorch CUDA wheels (requires pip fallback)
+- Team members need to learn Poetry commands
+- Some CI/CD pipelines may need updating
+- poetry.lock file increases repository size
+- Python 3.14.0 is very new, may have limited Poetry compatibility testing
+
+#### Rollback Plan
+Can revert to pure requirements.txt approach by:
+1. Remove pyproject.toml
+2. Revert README.md changes
+3. Use traditional venv + pip install -r requirements.txt
 
 ---
 
@@ -958,9 +1070,10 @@ Each agent subdirectory contains focused documentation:
 3. [x] Create component subdirectories with README templates
 4. [x] Create ARCHITECTURE.md with technical specifications
 5. [x] Create AGENTS.md with agent hierarchy and specifications
-6. [ ] Review existing Code/order.py and Code/test.py
-7. [ ] Document current IB API integration status
-8. [ ] Set up development environment with dependencies
+6. [x] Configure Poetry for dependency management
+7. [ ] Review existing Code/order.py and Code/test.py
+8. [ ] Document current IB API integration status
+9. [ ] Set up development environment with dependencies
 
 ### Week 1 Goals
 1. [ ] Complete Interactive Brokers API research

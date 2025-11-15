@@ -3,6 +3,7 @@
 An intelligent, automated trading system that combines machine learning, algorithmic trading, and comprehensive tax reconciliation for the US market.
 
 [![Python Version](https://img.shields.io/badge/python-3.14.0-blue.svg)](https://www.python.org/downloads/)
+[![Poetry](https://img.shields.io/endpoint?url=https://python-poetry.org/badge/v0.json)](https://python-poetry.org/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![CUDA](https://img.shields.io/badge/CUDA-Enabled-green.svg)](https://developer.nvidia.com/cuda-toolkit)
@@ -179,26 +180,64 @@ AiFinIntern/
    cd AiFinIntern
    ```
 
-2. **Create virtual environment**
+2. **Install Poetry** (recommended for dependency management)
    ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   # Using pip
+   pip install poetry
+
+   # Or using the official installer (recommended)
+   curl -sSL https://install.python-poetry.org | python3 -
+
+   # Verify installation
+   poetry --version
    ```
 
 3. **Install dependencies**
 
-   Using pip:
+   **Option A: Using Poetry (Recommended)**
    ```bash
-   pip install -r requirements.txt
-   ```
-
-   Using Poetry (recommended):
-   ```bash
-   pip install poetry
+   # Install all dependencies
    poetry install
+
+   # Install with CUDA support for GPU acceleration
+   poetry install --extras cuda
+
+   # Install with Jupyter notebook support
+   poetry install --extras jupyter
+
+   # Install all optional dependencies
+   poetry install --extras all
+
+   # Activate the virtual environment
+   poetry shell
+
+   # IMPORTANT: Install PyTorch with CUDA separately
+   poetry run pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
    ```
 
-4. **Set up environment variables**
+   **Option B: Using pip**
+   ```bash
+   # Create virtual environment
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+   # Install dependencies
+   pip install -r requirements.txt
+
+   # IMPORTANT: Install PyTorch with CUDA
+   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+   ```
+
+4. **Verify GPU Installation**
+   ```bash
+   # Check CUDA availability in PyTorch
+   poetry run python -c "import torch; print(f'CUDA available: {torch.cuda.is_available()}'); print(f'CUDA version: {torch.version.cuda}'); print(f'GPU: {torch.cuda.get_device_name(0) if torch.cuda.is_available() else \"N/A\"}')"
+
+   # Check TensorFlow GPU
+   poetry run python -c "import tensorflow as tf; print(f'GPUs available: {len(tf.config.list_physical_devices(\"GPU\"))}')"
+   ```
+
+5. **Set up environment variables**
    ```bash
    cp .env.example .env
    # Edit .env with your configuration
@@ -222,26 +261,39 @@ AiFinIntern/
    ENVIRONMENT=development
    ```
 
-5. **Set up database**
+6. **Set up database**
    ```bash
    # Using Docker Compose
    docker-compose up -d postgres redis
 
    # Or install PostgreSQL locally and run migrations
-   alembic upgrade head
+   poetry run alembic upgrade head
    ```
 
-6. **Run tests**
+7. **Run tests**
    ```bash
-   pytest tests/
+   # Using Poetry
+   poetry run pytest tests/
+
+   # Or with coverage
+   poetry run pytest --cov=components --cov-report=html
+
+   # Run specific test types
+   poetry run pytest -m unit           # Unit tests only
+   poetry run pytest -m integration    # Integration tests only
+   poetry run pytest -m "not slow"     # Skip slow tests
    ```
 
-7. **Start the application**
+8. **Start the application**
    ```bash
-   # Development mode
-   python -m src.main
+   # Using Poetry (recommended)
+   poetry run python -m components.main
 
-   # Or using Docker
+   # Or activate shell first
+   poetry shell
+   python -m components.main
+
+   # Using Docker
    docker-compose up
    ```
 
@@ -673,39 +725,76 @@ strategies:
 
 ```bash
 # All tests
-pytest
+poetry run pytest
 
 # Unit tests only
-pytest tests/unit/
+poetry run pytest tests/unit/
 
 # Integration tests
-pytest tests/integration/
+poetry run pytest tests/integration/
 
 # With coverage
-pytest --cov=components --cov-report=html
+poetry run pytest --cov=components --cov-report=html
+
+# Specific markers
+poetry run pytest -m unit
+poetry run pytest -m integration
+poetry run pytest -m "not slow"
+poetry run pytest -m gpu  # GPU-required tests
 ```
 
 ### Code Quality
 
 ```bash
 # Format code
-black components/ tests/
+poetry run black components/ tests/
 
 # Lint code
-ruff check components/ tests/
+poetry run ruff check components/ tests/
+
+# Fix linting issues automatically
+poetry run ruff check --fix components/ tests/
 
 # Type checking
-mypy components/
+poetry run mypy components/
+
+# Sort imports
+poetry run isort components/ tests/
+
+# Run all formatters at once
+poetry run black . && poetry run isort . && poetry run ruff check --fix .
 ```
 
 ### Pre-commit Hooks
 
 ```bash
 # Install pre-commit hooks
-pre-commit install
+poetry run pre-commit install
 
 # Run manually
-pre-commit run --all-files
+poetry run pre-commit run --all-files
+
+# Update hooks to latest versions
+poetry run pre-commit autoupdate
+```
+
+### Adding New Dependencies
+
+```bash
+# Add a new dependency
+poetry add package-name
+
+# Add a development dependency
+poetry add --group dev package-name
+
+# Add an optional dependency
+poetry add --optional package-name
+
+# Update dependencies
+poetry update
+
+# Show dependency tree
+poetry show --tree
 ```
 
 ---
