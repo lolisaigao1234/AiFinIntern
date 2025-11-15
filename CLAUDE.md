@@ -16,6 +16,7 @@
 6. [Decision Log](#decision-log)
 7. [Change Log](#change-log)
 8. [Risk Register](#risk-register)
+9. [Related Documentation](#related-documentation)
 
 ---
 
@@ -527,6 +528,58 @@ N/A - Initial setup
 
 ---
 
+### [CHANGE-002] - Architecture and Agent Documentation
+**Date**: 2025-11-15
+**Component**: Project Root / All Components
+**Type**: Documentation
+
+#### Reasoning
+Comprehensive technical architecture and agent specifications needed to guide development and avoid context overflow during AI-assisted development.
+
+#### Expected Outcome
+- Complete technical blueprint for implementation
+- Clear agent responsibilities and boundaries
+- Structured directory layout matching architecture
+- Prevention of context overflow issues during development
+
+#### Implementation Details
+- Created ARCHITECTURE.md with detailed technical specifications
+  - Database schema design (PostgreSQL + TimescaleDB)
+  - API specifications using FastAPI
+  - Class diagrams and data models
+  - Security and deployment architecture
+  - Performance targets and optimization strategies
+- Created AGENTS.md with agent hierarchy
+  - 5 main agents with 15 sub-agents total
+  - Context size limits for each agent (8K-12K tokens)
+  - Agent communication patterns (message passing, event bus)
+  - Decision boundaries for autonomous operation
+- Created full directory structure:
+  - `components/` with 5 main layers (data, strategy, execution, tax_recon, reporting)
+  - `agents/` subdirectories in each component
+  - `tests/` structure (unit, integration, paper_trading)
+  - `config/`, `docs/`, `logs/`, `data/` directories
+- Created README.md for each component documenting purpose and responsibilities
+- Added __init__.py files to create proper Python package structure
+- Updated CLAUDE.md with cross-references to new documentation
+
+#### Testing
+- [x] Documentation structure review
+- [x] Directory structure validation
+- [ ] Stakeholder review of architecture
+- [ ] Agent specification validation
+
+#### Risks & Challenges
+- Architecture may need refinement during implementation
+- Agent context limits may need adjustment based on real usage
+- Directory structure may evolve as implementation progresses
+- Need to keep all documentation synchronized
+
+#### Rollback Plan
+Can revert to simpler structure if needed, but architecture provides valuable blueprint for implementation.
+
+---
+
 ## Risk Register
 
 ### Risk Template
@@ -663,14 +716,97 @@ Execution Layer Subagent Team
 
 ---
 
+## Related Documentation
+
+### Core Documentation Files
+
+This project maintains several interconnected documentation files:
+
+#### 1. CLAUDE.md (This File)
+**Purpose**: Main project memory file tracking decisions, changes, and progress
+- Project overview and objectives
+- Development phases and milestones
+- Decision log with rationale
+- Change log with implementation details
+- Risk register and mitigation strategies
+
+#### 2. ARCHITECTURE.md
+**Purpose**: Technical architecture specification
+- Detailed system architecture and component design
+- Database schema definitions
+- API specifications and interfaces
+- Class diagrams and data models
+- Technology stack details
+- Security and deployment architecture
+
+**Link**: See [ARCHITECTURE.md](./ARCHITECTURE.md)
+
+#### 3. AGENTS.md
+**Purpose**: AI agent configuration and management
+- Agent hierarchy and responsibilities
+- Sub-agent specifications for each component
+- Context management strategies (to avoid token limits)
+- Agent communication patterns
+- Deployment and monitoring guidelines
+
+**Link**: See [AGENTS.md](./AGENTS.md)
+
+#### 4. README.md
+**Purpose**: Project introduction and quick start guide
+- Project overview for new developers
+- Installation and setup instructions
+- Quick start guide
+- Contributing guidelines
+
+**Link**: See [README.md](./README.md)
+
+### Component Documentation
+
+Each component has its own README.md:
+- `components/data_layer/README.md` - Data layer overview
+- `components/strategy_layer/README.md` - Strategy layer overview
+- `components/execution_layer/README.md` - Execution layer overview
+- `components/tax_recon/README.md` - Tax & reconciliation overview
+- `components/reporting/README.md` - Reporting engine overview
+
+### Agent-Specific Documentation
+
+Each agent subdirectory contains focused documentation:
+- `components/*/agents/*.md` - Individual agent specifications
+- Context limits and scope definitions
+- Decision boundaries and responsibilities
+
+### Documentation Update Guidelines
+
+**When to Update Each File**:
+
+| File | Update When |
+|------|-------------|
+| CLAUDE.md | Major decisions, phase completion, risks identified |
+| ARCHITECTURE.md | Technical design changes, new components, API changes |
+| AGENTS.md | New agents added, context limits adjusted, communication patterns changed |
+| README.md | Setup process changes, new features added |
+| Component READMEs | Component responsibilities change, new sub-components added |
+
+**Documentation Sync**:
+- All documentation files reference the same project version
+- Cross-reference related sections between files
+- Update Last Modified dates when making changes
+- Review all documentation monthly for accuracy
+
+---
+
 ## Next Steps
 
 ### Immediate Actions (Next 48 Hours)
-1. [ ] Review and approve CLAUDE.md structure
-2. [ ] Set up project directory structure
-3. [ ] Create component subdirectories with README templates
-4. [ ] Review existing Code/order.py and Code/test.py
-5. [ ] Document current IB API integration status
+1. [x] Review and approve CLAUDE.md structure
+2. [x] Set up project directory structure
+3. [x] Create component subdirectories with README templates
+4. [x] Create ARCHITECTURE.md with technical specifications
+5. [x] Create AGENTS.md with agent hierarchy and specifications
+6. [ ] Review existing Code/order.py and Code/test.py
+7. [ ] Document current IB API integration status
+8. [ ] Set up development environment with dependencies
 
 ### Week 1 Goals
 1. [ ] Complete Interactive Brokers API research
