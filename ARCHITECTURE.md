@@ -1002,24 +1002,46 @@ class TradingBot:
 
 ```yaml
 Language:
-  - Python: 3.11+
+  - Python: 3.14.0 (Required)
   - Type Hints: Full typing support with mypy
+
+Hardware Environment (Local Development):
+  - CPU: AMD Ryzen 7 7700X (8 cores, 16 threads)
+  - GPU: NVIDIA RTX 5090 Founders Edition (24GB VRAM)
+  - RAM: 32GB DDR5
+  - CUDA: 12.x with cuDNN 8.9+
 
 API & Broker Integration:
   - Interactive Brokers: ib_insync (async wrapper for ibapi)
   - Alternative: alpaca-trade-api (for Alpaca broker)
 
 Data Processing:
-  - pandas: 2.0+
-  - numpy: 1.24+
+  - pandas: 2.1+
+  - numpy: 1.26+
   - polars: High-performance alternative to pandas
+  - pyarrow: Columnar data format
 
 Machine Learning:
-  - scikit-learn: Traditional ML models
-  - TensorFlow: 2.13+ (for deep learning)
-  - PyTorch: 2.0+ (alternative to TensorFlow)
-  - XGBoost: Gradient boosting
-  - LightGBM: Fast gradient boosting
+  - PyTorch: 2.5.1+ (CUDA 12.1 enabled for RTX 5090)
+  - TensorFlow: 2.18.0+ (GPU support with CUDA)
+  - Hugging Face Transformers: 4.46+ (pre-trained model fine-tuning)
+  - scikit-learn: 1.6+ (traditional ML models)
+  - XGBoost: 2.1+ (gradient boosting)
+  - LightGBM: 4.5+ (fast gradient boosting)
+
+ML Model Fine-Tuning (Hugging Face):
+  - Financial Sentiment: ProsusAI/finbert, yiyanghkust/finbert-tone
+  - Time Series: AutonLab/MOMENT-1-large, google/timesfm-1.0-200m
+  - General Transformers: distilbert, deberta-v3, flan-t5
+  - Fine-tuning Libraries: transformers, datasets, accelerate, peft (LoRA)
+  - Quantization: bitsandbytes (8-bit optimizers)
+
+GPU Acceleration:
+  - CUDA Toolkit: 12.6+
+  - cuDNN: 8.9+
+  - CuPy: 13.3+ (NumPy-compatible GPU arrays)
+  - Mixed Precision: FP16 training for faster convergence
+  - Optimization: TF32 for matrix operations on RTX 5090
 
 Database:
   - PostgreSQL: 15+ (primary relational database)
@@ -1061,19 +1083,26 @@ description = "AI-Driven Quantitative Trading Bot"
 authors = ["Your Name <your.email@example.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.14.0"
 # Trading & Market Data
 ib-insync = "^0.9.86"
-pandas = "^2.0.0"
-numpy = "^1.24.0"
-polars = "^0.18.0"
+pandas = "^2.1.0"
+numpy = "^1.26.0"
+polars = "^0.19.0"
 
-# Machine Learning
-scikit-learn = "^1.3.0"
-tensorflow = "^2.13.0"
-torch = "^2.0.0"
-xgboost = "^1.7.0"
-lightgbm = "^4.0.0"
+# Machine Learning (GPU-enabled)
+torch = "^2.5.1"  # Install with: --index-url https://download.pytorch.org/whl/cu121
+tensorflow = {extras = ["and-cuda"], version = "^2.18.0"}
+scikit-learn = "^1.6.0"
+xgboost = "^2.1.0"
+lightgbm = "^4.5.0"
+
+# Hugging Face Ecosystem
+transformers = "^4.46.0"
+datasets = "^3.1.0"
+accelerate = "^1.1.0"
+peft = "^0.13.0"
+bitsandbytes = "^0.44.0"
 
 # Database
 sqlalchemy = "^2.0.0"
@@ -1109,6 +1138,309 @@ pre-commit = "^3.3.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+```
+
+---
+
+## ML Model Fine-Tuning Architecture
+
+### Fine-Tuning Philosophy
+
+**Core Principle**: Leverage pre-trained models from Hugging Face and other open-source platforms rather than training from scratch.
+
+**Rationale**:
+- **Transfer Learning**: Utilize knowledge from large-scale pre-training on massive datasets
+- **Time Efficiency**: Reduce training time from weeks/months to hours/days
+- **Cost Efficiency**: Lower computational costs (no need for extensive pre-training)
+- **Better Performance**: State-of-the-art architectures from research community
+- **Data Efficiency**: Achieve good results with limited financial data
+
+### GPU Optimization Strategy
+
+#### Hardware Utilization (RTX 5090)
+
+```python
+import torch
+import tensorflow as tf
+
+# PyTorch CUDA Configuration
+def configure_pytorch_gpu():
+    """Optimize PyTorch for RTX 5090"""
+    assert torch.cuda.is_available(), "CUDA not available!"
+
+    # Device info
+    device = torch.device("cuda:0")
+    print(f"GPU: {torch.cuda.get_device_name(0)}")
+    print(f"VRAM: {torch.cuda.get_device_properties(0).total_memory / 1e9:.2f} GB")
+
+    # Optimization settings
+    torch.backends.cudnn.benchmark = True  # Auto-tune kernels
+    torch.backends.cuda.matmul.allow_tf32 = True  # TF32 for matmul
+    torch.set_float32_matmul_precision('high')  # Better performance
+
+    # Memory management
+    torch.cuda.empty_cache()  # Clear cache before training
+
+    return device
+
+# TensorFlow GPU Configuration
+def configure_tensorflow_gpu():
+    """Optimize TensorFlow for RTX 5090"""
+    gpus = tf.config.list_physical_devices('GPU')
+
+    if gpus:
+        for gpu in gpus:
+            # Enable memory growth (prevent OOM)
+            tf.config.experimental.set_memory_growth(gpu, True)
+
+        # Mixed precision for faster training
+        tf.keras.mixed_precision.set_global_policy('mixed_float16')
+
+        print(f"TensorFlow GPU: {tf.test.gpu_device_name()}")
+```
+
+#### Memory Optimization Techniques
+
+**1. Mixed Precision Training (FP16)**
+```python
+from torch.cuda.amp import autocast, GradScaler
+
+# PyTorch mixed precision
+scaler = GradScaler()
+
+for epoch in range(num_epochs):
+    for batch in dataloader:
+        optimizer.zero_grad()
+
+        # Automatic mixed precision
+        with autocast():
+            outputs = model(batch['input_ids'], attention_mask=batch['attention_mask'])
+            loss = outputs.loss
+
+        # Scale loss and backprop
+        scaler.scale(loss).backward()
+        scaler.step(optimizer)
+        scaler.update()
+```
+
+**2. Gradient Checkpointing**
+```python
+# Trade computation for memory (reduces VRAM usage by ~30%)
+model.gradient_checkpointing_enable()
+```
+
+**3. Gradient Accumulation**
+```python
+# Simulate larger batch sizes
+accumulation_steps = 4
+for i, batch in enumerate(dataloader):
+    outputs = model(**batch)
+    loss = outputs.loss / accumulation_steps
+    loss.backward()
+
+    if (i + 1) % accumulation_steps == 0:
+        optimizer.step()
+        optimizer.zero_grad()
+```
+
+**4. Dynamic Batching**
+```python
+# Adjust batch size based on available memory
+def get_optimal_batch_size(model, device, sample_input):
+    """Find largest batch size that fits in memory"""
+    batch_size = 1
+    while True:
+        try:
+            # Test batch
+            batch = {k: v.repeat(batch_size, 1).to(device)
+                    for k, v in sample_input.items()}
+            _ = model(**batch)
+            batch_size *= 2
+        except RuntimeError:  # OOM
+            return batch_size // 2
+```
+
+### Fine-Tuning Pipeline Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│           Fine-Tuning Pipeline Architecture              │
+└─────────────────────────────────────────────────────────┘
+                         │
+        ┌────────────────┼────────────────┐
+        │                │                │
+        ▼                ▼                ▼
+┌──────────────┐  ┌──────────────┐  ┌──────────────┐
+│ Model        │  │ Data         │  │ Training     │
+│ Selection    │  │ Preparation  │  │ Pipeline     │
+└──────────────┘  └──────────────┘  └──────────────┘
+        │                │                │
+        ▼                ▼                ▼
+┌──────────────┐  ┌──────────────┐  ┌──────────────┐
+│ Download     │  │ Tokenization │  │ GPU          │
+│ Pre-trained  │  │ & Feature    │  │ Training     │
+│ Model        │  │ Engineering  │  │ (RTX 5090)   │
+└──────────────┘  └──────────────┘  └──────────────┘
+        │                │                │
+        ▼                ▼                ▼
+┌──────────────────────────────────────────────────┐
+│            Evaluation & Validation                │
+└──────────────────────────────────────────────────┘
+        │                │                │
+        ▼                ▼                ▼
+┌──────────────┐  ┌──────────────┐  ┌──────────────┐
+│ Model        │  │ Inference    │  │ Deployment   │
+│ Export       │  │ Optimization │  │ to Trading   │
+│ (ONNX)       │  │ (Quantize)   │  │ System       │
+└──────────────┘  └──────────────┘  └──────────────┘
+```
+
+### Recommended Models for Financial Trading
+
+#### 1. Financial Sentiment Analysis
+
+**Model**: `ProsusAI/finbert`
+- **Purpose**: Analyze financial news sentiment
+- **Architecture**: BERT-base fine-tuned on financial data
+- **Use Case**: News-driven trading signals
+
+**Fine-tuning Example**:
+```python
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from transformers import Trainer, TrainingArguments
+
+# Load pre-trained FinBERT
+tokenizer = AutoTokenizer.from_pretrained("ProsusAI/finbert")
+model = AutoModelForSequenceClassification.from_pretrained(
+    "ProsusAI/finbert",
+    num_labels=3  # Positive, Negative, Neutral
+)
+
+# Training arguments optimized for RTX 5090
+training_args = TrainingArguments(
+    output_dir="./models/finbert_custom",
+    num_train_epochs=3,
+    per_device_train_batch_size=32,  # Large batch for 24GB VRAM
+    per_device_eval_batch_size=64,
+    learning_rate=2e-5,
+    warmup_steps=500,
+    weight_decay=0.01,
+    fp16=True,  # Mixed precision
+    dataloader_num_workers=8,  # Utilize all CPU cores
+    optim="adamw_torch_fused",  # Faster optimizer
+)
+```
+
+#### 2. Time Series Forecasting
+
+**Model**: `AutonLab/MOMENT-1-large`
+- **Purpose**: General-purpose time series foundation model
+- **Architecture**: Transformer-based time series model
+- **Use Case**: Price prediction, trend forecasting
+
+**Alternative**: `google/timesfm-1.0-200m`
+- **Purpose**: Time series forecasting at scale
+- **Architecture**: Decoder-only transformer
+- **Use Case**: Multi-horizon forecasting
+
+#### 3. Parameter-Efficient Fine-Tuning (PEFT)
+
+**Using LoRA for Memory Efficiency**:
+```python
+from peft import LoraConfig, get_peft_model, TaskType
+
+# Configure LoRA (Low-Rank Adaptation)
+lora_config = LoraConfig(
+    task_type=TaskType.SEQ_CLS,
+    r=8,  # Rank
+    lora_alpha=32,
+    lora_dropout=0.1,
+    target_modules=["query", "value"]  # Only fine-tune attention
+)
+
+# Apply LoRA to model (reduces trainable params by 90%+)
+model = get_peft_model(model, lora_config)
+print(f"Trainable params: {model.num_parameters(only_trainable=True):,}")
+```
+
+### Training Performance Benchmarks
+
+**Expected Performance on RTX 5090:**
+
+| Model | Params | Batch Size | Throughput (samples/sec) | Training Time (1 epoch, 10k samples) |
+|-------|--------|------------|-------------------------|-------------------------------------|
+| FinBERT | 110M | 32 | ~180 | ~15 minutes |
+| DistilBERT | 66M | 64 | ~320 | ~8 minutes |
+| MOMENT-1-large | 385M | 16 | ~90 | ~30 minutes |
+| Custom LSTM | 5M | 256 | ~2000 | ~2 minutes |
+
+**Memory Usage**:
+- FinBERT (batch 32, FP16): ~12GB VRAM
+- FinBERT (batch 32, FP32): ~20GB VRAM
+- MOMENT-1-large (batch 16, FP16): ~18GB VRAM
+
+### Model Integration with Trading System
+
+```python
+# components/strategy_layer/models/ml_model_loader.py
+
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
+import torch
+
+class FinancialMLModel:
+    """Wrapper for fine-tuned financial ML models"""
+
+    def __init__(self, model_path: str, device: str = "cuda"):
+        self.device = torch.device(device if torch.cuda.is_available() else "cpu")
+        self.tokenizer = AutoTokenizer.from_pretrained(model_path)
+        self.model = AutoModelForSequenceClassification.from_pretrained(model_path)
+        self.model.to(self.device)
+        self.model.eval()  # Inference mode
+
+    @torch.no_grad()
+    def predict_sentiment(self, text: str) -> dict:
+        """Predict sentiment for financial text"""
+        inputs = self.tokenizer(
+            text,
+            return_tensors="pt",
+            truncation=True,
+            max_length=512
+        ).to(self.device)
+
+        outputs = self.model(**inputs)
+        probabilities = torch.softmax(outputs.logits, dim=-1)
+
+        return {
+            "positive": probabilities[0][0].item(),
+            "negative": probabilities[0][1].item(),
+            "neutral": probabilities[0][2].item()
+        }
+```
+
+### Monitoring and Optimization
+
+**GPU Monitoring During Training**:
+```python
+import torch
+
+def log_gpu_metrics():
+    """Log GPU utilization and memory"""
+    if torch.cuda.is_available():
+        print(f"GPU Memory Allocated: {torch.cuda.memory_allocated() / 1e9:.2f} GB")
+        print(f"GPU Memory Reserved: {torch.cuda.memory_reserved() / 1e9:.2f} GB")
+        print(f"GPU Utilization: {torch.cuda.utilization()}%")
+```
+
+**TensorBoard Integration**:
+```python
+from torch.utils.tensorboard import SummaryWriter
+
+writer = SummaryWriter('logs/finbert_training')
+
+# Log metrics
+writer.add_scalar('Loss/train', train_loss, epoch)
+writer.add_scalar('Accuracy/val', val_accuracy, epoch)
+writer.add_scalar('GPU/memory_allocated', torch.cuda.memory_allocated() / 1e9, epoch)
 ```
 
 ---
