@@ -1,8 +1,9 @@
 # AGENTS.md - AI Agent Configuration & Management
 
-**Document Version**: 1.0
+**Document Version**: 1.1
 **Last Updated**: 2025-11-15
-**Related**: See CLAUDE.md for project overview, ARCHITECTURE.md for technical details
+**Related**: See [CLAUDE.md](../../CLAUDE.md) for project overview, [ARCHITECTURE.md](./ARCHITECTURE.md) for technical details
+**Location**: `.claude/memory/architecture/AGENTS.md`
 
 ---
 

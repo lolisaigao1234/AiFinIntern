@@ -2,7 +2,8 @@
 
 **Project**: AI-Driven Tax and Portfolio Reconciliation System
 **Last Updated**: 2025-11-15
-**Documentation Home**: [CLAUDE.md](./CLAUDE.md)
+**Documentation Home**: [CLAUDE.md](../../../CLAUDE.md)
+**Location**: `.claude/memory/tracking/TESTING.md`
 
 ---
 
@@ -11,10 +12,10 @@
 This document defines the comprehensive testing and validation strategy for the AI trading bot. The strategy follows the testing pyramid approach with unit tests at the base, integration tests in the middle, and manual/paper trading tests at the top.
 
 **Related Documentation**:
-- [CLAUDE.md](./CLAUDE.md) - Main project overview
-- [ROADMAP.md](./ROADMAP.md) - Project phases and milestones
-- [DECISIONS.md](./DECISIONS.md) - Decision log
-- [RISKS.md](./RISKS.md) - Risk register
+- [CLAUDE.md](../../../CLAUDE.md) - Main project overview and index
+- [ROADMAP.md](../planning/ROADMAP.md) - Project phases and milestones
+- [DECISIONS.md](../planning/DECISIONS.md) - Decision log
+- [RISKS.md](../planning/RISKS.md) - Risk register
 
 ---
 

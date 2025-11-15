@@ -2,7 +2,8 @@
 
 **Project**: AI-Driven Tax and Portfolio Reconciliation System
 **Last Updated**: 2025-11-15
-**Documentation Home**: [CLAUDE.md](./CLAUDE.md)
+**Documentation Home**: [CLAUDE.md](../../../CLAUDE.md)
+**Location**: `.claude/memory/tracking/CHANGES.md`
 
 ---
 
@@ -11,10 +12,10 @@
 This document tracks all significant changes, implementations, and modifications made to the project. Each change entry includes reasoning, expected outcomes, implementation details, testing status, and rollback plans.
 
 **Related Documentation**:
-- [CLAUDE.md](./CLAUDE.md) - Main project overview
-- [DECISIONS.md](./DECISIONS.md) - Decision log
-- [RISKS.md](./RISKS.md) - Risk register
-- [ROADMAP.md](./ROADMAP.md) - Project phases and milestones
+- [CLAUDE.md](../../../CLAUDE.md) - Main project overview and index
+- [DECISIONS.md](../planning/DECISIONS.md) - Decision log
+- [RISKS.md](../planning/RISKS.md) - Risk register
+- [ROADMAP.md](../planning/ROADMAP.md) - Project phases and milestones
 
 ---
 
@@ -51,6 +52,79 @@ This document tracks all significant changes, implementations, and modifications
 ---
 
 ## Changes
+
+### [CHANGE-008] - Restructure Project Documentation into .claude/memory Directory
+**Date**: 2025-11-15
+**Component**: Project Structure / Documentation
+**Type**: Refactor
+
+#### Reasoning
+The project root directory had become cluttered with 8+ markdown documentation files plus docs/ and Code/ directories. This made the project difficult to navigate and maintain. A cleaner, more organized structure was needed to improve maintainability and discoverability.
+
+#### Expected Outcome
+- Clean, organized project root directory with only README.md and CLAUDE.md
+- Well-structured documentation in `.claude/memory/` with logical categorization
+- Improved documentation discoverability and navigation
+- Better separation of concerns (planning, tracking, architecture, research, guides)
+- Sample code separated in `.claude/samples/`
+
+#### Implementation Details
+**Directory Structure Created**:
+- `.claude/memory/planning/` - ROADMAP.md, DECISIONS.md, RISKS.md
+- `.claude/memory/tracking/` - CHANGES.md, TESTING.md
+- `.claude/memory/architecture/` - ARCHITECTURE.md, AGENTS.md
+- `.claude/memory/research/ib-api/` - IB API research documentation
+- `.claude/memory/research/milestones/` - Phase completion summaries
+- `.claude/memory/guides/windows/` - Windows setup guides
+- `.claude/samples/ib-testbed/` - IB API sample code
+
+**Files Moved**:
+- 8 markdown files from root → `.claude/memory/` subdirectories
+- 4 markdown files from `docs/` → `.claude/memory/research/ib-api/`
+- 1 phase summary from `docs/` → `.claude/memory/research/milestones/`
+- 5 Windows guides from `docs/windows/` → `.claude/memory/guides/windows/`
+- 10 sample code files from `Code/` → `.claude/samples/ib-testbed/`
+
+**Documentation Updated**:
+- CLAUDE.md rewritten as main documentation index with new paths
+- All cross-references updated in moved documents
+- ARCHITECTURE.md updated with new location and references
+- DECISIONS.md and CHANGES.md updated with new entries and paths
+- README.md preserved in root directory
+
+**Cleanup**:
+- Removed empty `docs/` and `docs/windows/` directories
+- Removed empty `Code/` directory
+
+#### Testing
+- [x] All files successfully moved to new locations
+- [x] Directory structure created correctly
+- [x] CLAUDE.md updated with new structure and paths
+- [x] Cross-references updated in documentation files
+- [x] Git history preserved (using mv instead of copy+delete)
+- [x] Empty directories cleaned up
+- [ ] All links verified (in progress)
+- [ ] Documentation build tested
+- [ ] README.md verified for broken links
+
+#### Risks & Challenges
+- **Link Breakage**: Some external tools or bookmarks may reference old paths
+  - *Mitigation*: Updated all internal cross-references
+- **CI/CD Updates**: Build scripts may need updating if they reference old paths
+  - *Mitigation*: Project is in early stage, minimal CI/CD impact
+- **Learning Curve**: Team needs to learn new structure
+  - *Mitigation*: Clear documentation in CLAUDE.md, logical organization
+
+#### Rollback Plan
+If needed, can reverse the restructuring:
+1. `git revert` the restructuring commit
+2. Or manually move files back: `mv .claude/memory/*/* .` and `mv .claude/samples/ib-testbed/* Code/`
+3. Restore old CLAUDE.md from git history
+4. Remove `.claude/` directory
+
+**Files affected**: 28 files moved, 3 directories removed, 11 directories created, 3+ documentation files updated
+
+---
 
 ### [CHANGE-001] - Initial Project Setup
 **Date**: 2025-11-15

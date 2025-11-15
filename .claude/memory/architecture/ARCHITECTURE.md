@@ -1,9 +1,10 @@
 # ARCHITECTURE.md - Technical Architecture Specification
 
-**Document Version**: 1.0
+**Document Version**: 1.1
 **Last Updated**: 2025-11-15
 **Status**: Initial Design
-**Related**: See CLAUDE.md for project overview and planning
+**Related**: See [../../CLAUDE.md](../../CLAUDE.md) for project overview and planning
+**Location**: `.claude/memory/architecture/ARCHITECTURE.md`
 
 ---
 
