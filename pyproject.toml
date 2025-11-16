@@ -45,11 +45,13 @@ ta-lib = "^0.4.28"
 
 # Deep Learning Frameworks
 # NOTE: PyTorch with CUDA 13.0 must be installed separately with:
-#   pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu130
+#   pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu130
+# NOTE: On Windows, NCCL is not supported - PyTorch/TensorFlow will work without it
 torch = {version = ">=2.6.0", source = "pytorch-cu130", optional = true}
 torchvision = {version = ">=0.21.0", source = "pytorch-cu130", optional = true}
 torchaudio = {version = ">=2.6.0", source = "pytorch-cu130", optional = true}
-tensorflow = {version = "^2.19.0", extras = ["and-cuda"]}
+# TensorFlow CPU version for Windows (CUDA support via separate pip install if needed)
+tensorflow = {version = "^2.19.0"}
 
 # Hugging Face Ecosystem
 transformers = "^4.47.0"
@@ -174,13 +176,14 @@ distro = "^1.9.0"
 
 # GPU Acceleration (CUDA 13.0)
 # NOTE: Ensure NVIDIA driver supports CUDA 13.0+ for RTX 5090
-# NOTE: nvidia-cuda-runtime-cu12 is managed by TensorFlow (requires specific version)
-# NOTE: nvidia-nccl-cu* is LINUX-ONLY and not required on Windows
-#       PyTorch/TensorFlow will work without NCCL on Windows with single-GPU setups
+# NOTE: nvidia-nccl-cu* is LINUX-ONLY and not available on Windows
+#       PyTorch/TensorFlow will work without NCCL on Windows (single-GPU setups)
+# NOTE: For CUDA support on Windows:
+#       1. Install PyTorch with CUDA via pip (after poetry install):
+#          pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu130
+#       2. For TensorFlow GPU, install separately:
+#          pip install tensorflow[and-cuda]
 cupy-cuda12x = "^13.3.0"
-
-# Explicitly exclude NCCL on Windows (Linux-only package)
-# This prevents transitive installation from TensorFlow/PyTorch
 
 [tool.poetry.group.dev.dependencies]
 # Testing
