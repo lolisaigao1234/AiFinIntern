@@ -179,6 +179,10 @@ distro = "^1.9.0"
 #       PyTorch/TensorFlow will work without NCCL on Windows with single-GPU setups
 cupy-cuda12x = "^13.3.0"
 
+# Explicitly exclude NCCL on Windows (Linux-only package)
+# This prevents transitive installation from TensorFlow/PyTorch
+nvidia-nccl-cu12 = {version = "*", markers = "sys_platform == 'linux'", optional = true}
+
 [tool.poetry.group.dev.dependencies]
 # Testing
 pytest = "^8.3.0"

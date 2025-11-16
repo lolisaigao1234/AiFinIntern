@@ -361,6 +361,8 @@ poetry install
 **Windows-Specific Notes**:
 - Added documentation that `nvidia-nccl-cu*` is **Linux-only**
 - NCCL (NVIDIA Collective Communications Library) has no Windows support
+- Added explicit OS detection: `nvidia-nccl-cu12 = {version = "*", markers = "sys_platform == 'linux'", optional = true}`
+- This prevents Poetry from attempting to install NCCL on Windows
 - PyTorch and TensorFlow work fine on Windows without NCCL for single-GPU setups
 - If NCCL is required (multi-GPU), use WSL2 with Linux
 
