@@ -355,7 +355,7 @@ poetry install
 - tokenizers: ^0.20.3 → ^0.21.0
 - accelerate: ^1.1.1 → ^1.2.0
 - huggingface-hub: ^0.26.2 → ^0.27.0
-- safetensors: ^0.4.5 → ^0.4.6
+- safetensors: ^0.4.5 → ^0.6.0 (latest stable with Python 3.13 support)
 - wandb: ^0.18.7 → ^0.19.0
 
 **Web Framework & Database**:
