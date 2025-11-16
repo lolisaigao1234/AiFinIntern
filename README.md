@@ -224,9 +224,6 @@ AiFinIntern/
    ```bash
    # Check CUDA availability in PyTorch
    poetry run python -c "import torch; print('CUDA available:', torch.cuda.is_available()); print('CUDA version:', torch.version.cuda); print('GPU:', torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'N/A')"
-
-   # Check TensorFlow GPU
-   poetry run python -c "import tensorflow as tf; print('GPUs available:', len(tf.config.list_physical_devices('GPU')))"
    ```
 
 5. **Set up environment variables**
