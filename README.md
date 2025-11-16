@@ -220,19 +220,6 @@ AiFinIntern/
    poetry run pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu130
    ```
 
-   **Option B: Using pip**
-   ```bash
-   # Create virtual environment
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-   # Install dependencies
-   pip install -r requirements.txt
-
-   # IMPORTANT: Install PyTorch with CUDA
-   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
-   ```
-
 4. **Verify GPU Installation**
    ```bash
    # Check CUDA availability in PyTorch
