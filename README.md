@@ -223,11 +223,11 @@ AiFinIntern/
 4. **Verify GPU Installation**
    ```bash
    # Check CUDA availability in PyTorch
-   poetry run python -c "import torch; print(f'CUDA available: {torch.cuda.is_available()}'); print(f'CUDA version: {torch.version.cuda}'); print(f'GPU: {torch.cuda.get_device_name(0) if torch.cuda.is_available() else \"N/A\"}')"
+   poetry run python -c "import torch; print('CUDA available:', torch.cuda.is_available()); print('CUDA version:', torch.version.cuda); print('GPU:', torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'N/A')"
 
    # Check TensorFlow GPU
-   poetry run python -c "import tensorflow as tf; print(f'GPUs available: {len(tf.config.list_physical_devices(\"GPU\"))}')"
-   ```
+   poetry run python -c "import tensorflow as tf; print('GPUs available:', len(tf.config.list_physical_devices('GPU')))"
+   ```asd
 
 5. **Set up environment variables**
    ```bash
