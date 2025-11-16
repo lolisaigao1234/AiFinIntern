@@ -227,7 +227,7 @@ AiFinIntern/
 
    # Check TensorFlow GPU
    poetry run python -c "import tensorflow as tf; print('GPUs available:', len(tf.config.list_physical_devices('GPU')))"
-   ```asd
+   ```
 
 5. **Set up environment variables**
    ```bash
