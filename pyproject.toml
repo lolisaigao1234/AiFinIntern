@@ -36,11 +36,11 @@ ib-insync = "^0.9.86"
 ibapi = "^9.81.1"
 
 # Data Processing & Analysis
-pandas = "^2.1.4"
-numpy = "^1.26.2"
-polars = "^0.19.19"
-pyarrow = "^15.0.0"
-scipy = "^1.11.4"
+pandas = "^2.2.0"
+numpy = "^2.1.0"
+polars = "^1.0.0"
+pyarrow = "^18.0.0"
+scipy = "^1.14.0"
 ta-lib = "^0.4.28"
 
 # Deep Learning Frameworks
@@ -49,16 +49,16 @@ ta-lib = "^0.4.28"
 torch = {version = ">=2.6.0", source = "pytorch-cu130", optional = true}
 torchvision = {version = ">=0.21.0", source = "pytorch-cu130", optional = true}
 torchaudio = {version = ">=2.6.0", source = "pytorch-cu130", optional = true}
-tensorflow = {version = "^2.18.0", extras = ["and-cuda"]}
+tensorflow = {version = "^2.19.0", extras = ["and-cuda"]}
 
 # Hugging Face Ecosystem
-transformers = "^4.46.3"
-datasets = "^3.1.0"
-tokenizers = "^0.20.3"
-accelerate = "^1.1.1"
+transformers = "^4.47.0"
+datasets = "^3.2.0"
+tokenizers = "^0.21.0"
+accelerate = "^1.2.0"
 evaluate = "^0.4.3"
-huggingface-hub = "^0.26.2"
-safetensors = "^0.4.5"
+huggingface-hub = "^0.27.0"
+safetensors = "^0.4.6"
 sentencepiece = "^0.2.0"
 protobuf = "^5.28.3"
 bitsandbytes = "^0.44.1"
@@ -69,35 +69,35 @@ joblib = "^1.4.2"
 optuna = "^4.1.0"
 shap = "^0.46.0"
 tensorboard = "^2.18.0"
-wandb = "^0.18.7"
+wandb = "^0.19.0"
 
 # Database & Storage
-sqlalchemy = "^2.0.25"
-asyncpg = "^0.29.0"
-psycopg2-binary = "^2.9.9"
-alembic = "^1.13.1"
-redis = "^5.0.1"
-hiredis = "^2.3.2"
+sqlalchemy = "^2.0.36"
+asyncpg = "^0.30.0"
+psycopg2-binary = "^2.9.10"
+alembic = "^1.14.0"
+redis = "^5.2.0"
+hiredis = "^3.0.0"
 
 # Web Framework & API
-fastapi = "^0.108.0"
-uvicorn = {version = "^0.25.0", extras = ["standard"]}
-pydantic = "^2.5.3"
-pydantic-settings = "^2.1.0"
+fastapi = "^0.115.0"
+uvicorn = {version = "^0.32.0", extras = ["standard"]}
+pydantic = "^2.10.0"
+pydantic-settings = "^2.6.0"
 python-multipart = "^0.0.6"
 websockets = "^12.0"
 
 # Async & Concurrency
 asyncio = "^3.4.3"
-aiohttp = "^3.9.1"
-aiofiles = "^23.2.1"
-aiocache = "^0.12.2"
+aiohttp = "^3.11.0"
+aiofiles = "^24.1.0"
+aiocache = "^0.12.3"
 
 # Data Visualization & Reporting
-plotly = "^5.18.0"
-matplotlib = "^3.8.2"
-seaborn = "^0.13.1"
-dash = "^2.14.2"
+plotly = "^5.24.0"
+matplotlib = "^3.9.0"
+seaborn = "^0.13.2"
+dash = "^2.18.0"
 dash-bootstrap-components = "^1.5.0"
 kaleido = "^0.2.1"
 reportlab = "^4.0.8"
@@ -168,8 +168,8 @@ msgpack = "^1.0.7"
 
 # Environment & Platform
 python-magic = "^0.4.27"
-psutil = "^5.9.6"
-distro = "^1.8.0"
+psutil = "^6.1.0"
+distro = "^1.9.0"
 
 # GPU Acceleration (CUDA 13.0)
 # NOTE: Ensure NVIDIA driver supports CUDA 13.0+ for RTX 5090
@@ -178,22 +178,22 @@ cupy-cuda12x = "^13.3.0"
 
 [tool.poetry.group.dev.dependencies]
 # Testing
-pytest = "^7.4.3"
-pytest-asyncio = "^0.21.1"
-pytest-cov = "^4.1.0"
-pytest-mock = "^3.12.0"
-hypothesis = "^6.92.1"
-faker = "^22.0.0"
-responses = "^0.24.1"
+pytest = "^8.3.0"
+pytest-asyncio = "^0.24.0"
+pytest-cov = "^6.0.0"
+pytest-mock = "^3.14.0"
+hypothesis = "^6.122.0"
+faker = "^33.0.0"
+responses = "^0.25.0"
 
 # Code Quality
-black = "^23.12.1"
-ruff = "^0.1.9"
+black = "^24.10.0"
+ruff = "^0.8.0"
 isort = "^5.13.2"
-autopep8 = "^2.0.4"
+autopep8 = "^2.3.0"
 
 # Type Checking
-mypy = "^1.7.1"
+mypy = "^1.13.0"
 types-redis = "^4.6.0"
 types-requests = "^2.31.0"
 types-pyyaml = "^6.0.12"
