@@ -152,8 +152,9 @@ alpha-vantage = "^2.3.1"
 fredapi = "^0.5.1"
 pandas-datareader = "^0.10.0"
 quantlib = "^1.31"
-pyfolio = "^0.9.2"
-empyrical = "^0.5.5"
+# NOTE: pyfolio and empyrical removed - incompatible with Python 3.12+
+# These packages are abandoned and fail with: AttributeError: module 'configparser' has no attribute 'SafeConfigParser'
+# Alternative: Use quantstats (pip install quantstats) for portfolio analytics
 zipline-reloaded = "^3.0.3"
 
 # Utilities
@@ -174,6 +175,8 @@ distro = "^1.9.0"
 # GPU Acceleration (CUDA 13.0)
 # NOTE: Ensure NVIDIA driver supports CUDA 13.0+ for RTX 5090
 # NOTE: nvidia-cuda-runtime-cu12 is managed by TensorFlow (requires specific version)
+# NOTE: nvidia-nccl-cu* is LINUX-ONLY and not required on Windows
+#       PyTorch/TensorFlow will work without NCCL on Windows with single-GPU setups
 cupy-cuda12x = "^13.3.0"
 
 [tool.poetry.group.dev.dependencies]

@@ -335,6 +335,52 @@ poetry install
 
 ## 🔄 Dependency Upgrade History
 
+### 2025-11-15: Remove Python 3.12+ Incompatible Packages (empyrical, pyfolio)
+
+**Trigger**: Installation failure on Windows with Python 3.13.9
+**Impact**: HIGH - Enables installation on Python 3.12+ and Windows environments
+**Migration Steps**: Removed abandoned packages incompatible with Python 3.12+
+
+**Removed Packages**:
+- **empyrical** ^0.5.5 - Abandoned package, fails with `AttributeError: module 'configparser' has no attribute 'SafeConfigParser'`
+- **pyfolio** ^0.9.2 - Depends on empyrical, also abandoned and incompatible
+
+**Root Cause**:
+- `SafeConfigParser` was deprecated in Python 3.2 and removed in Python 3.12
+- Both packages are unmaintained and have no Python 3.12+ compatible releases
+- Official repositories have been archived/abandoned
+
+**Alternative Solutions**:
+- **For portfolio analytics**: Use `quantstats` (maintained, Python 3.12+ compatible)
+  ```bash
+  pip install quantstats
+  ```
+- **For backtesting**: Continue using `zipline-reloaded` (already included, works fine)
+- **For performance metrics**: Build custom metrics using pandas and numpy
+
+**Windows-Specific Notes**:
+- Added documentation that `nvidia-nccl-cu*` is **Linux-only**
+- NCCL (NVIDIA Collective Communications Library) has no Windows support
+- PyTorch and TensorFlow work fine on Windows without NCCL for single-GPU setups
+- If NCCL is required (multi-GPU), use WSL2 with Linux
+
+**Changed Files**:
+- `pyproject.toml` - Removed empyrical and pyfolio, added NCCL note
+
+**Testing Checklist**:
+- [x] pyproject.toml updated
+- [x] Poetry check passes
+- [ ] Poetry install succeeds on Windows with Python 3.13.9
+- [ ] All remaining financial packages work correctly
+
+**References**:
+- [empyrical GitHub - Archived](https://github.com/quantopian/empyrical)
+- [pyfolio GitHub - Archived](https://github.com/quantopian/pyfolio)
+- [quantstats - Modern Alternative](https://github.com/ranaroussi/quantstats)
+- [NVIDIA NCCL Docs - Linux only](https://docs.nvidia.com/deeplearning/nccl/)
+
+---
+
 ### 2025-11-15: Major Package Upgrades for Python 3.13 Compatibility
 
 **Trigger**: PyArrow 15.0.2 build failure - no Python 3.13 wheels, outdated package ecosystem
