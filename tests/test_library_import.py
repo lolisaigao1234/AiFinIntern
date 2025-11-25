@@ -62,7 +62,7 @@ def test_library_import():
         overall_success = False
     
     try:
-        import beautifulsoup4
+        import bs4
         print("[PASS] beautifulsoup4 imported successfully")
     except ImportError as e:
         print(f"[FAIL] Failed to import beautifulsoup4: {e}")
