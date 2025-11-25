@@ -7,3 +7,4 @@ data/__pycache__/fetch_price_data.cpython-313.pyc
 tests/__pycache__/test_fetch_price_data.cpython-313-pytest-9.0.1.pyc
 tests\__pycache__
 data\__pycache__
+.pytest_cache
