@@ -3,3 +3,5 @@ data/__pycache__/fetch_price_data.cpython-312.pyc
 test_output.txt
 tests/__pycache__/test_fetch_price_data.cpython-312-pytest-7.4.4.pyc
 tests\__pycache__
+data/__pycache__/fetch_price_data.cpython-313.pyc
+tests/__pycache__/test_fetch_price_data.cpython-313-pytest-9.0.1.pyc
