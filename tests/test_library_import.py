@@ -1,93 +1,44 @@
 import sys
-
+import importlib
 
 def test_library_import():
+    # Dictionary mapping library names to their import module names
+    library_mapping = {
+        "torch": "torch",
+        "transformers": "transformers",
+        "pandas": "pandas",
+        "numpy": "numpy",
+        "yfinance": "yfinance",
+        "requests": "requests",
+        "beautifulsoup4": "bs4",
+        "feedparser": "feedparser",
+        "pytest": "pytest",
+        "matplotlib": "matplotlib",
+    }
+
+    results = {}
     overall_success = True
-    
-    print("Testing library imports...")
-    try:
-        import torch
-        print("[PASS] torch imported successfully")
-    except ImportError as e:
-        print(f"[FAIL] Failed to import torch: {e}")
-        overall_success = False
 
-    try:
-        import transformers
-        print("[PASS] transformers imported successfully")
+    print("Testing library imports...\n")
 
-        version = transformers.__version__
-        if version >= "4.40.0":
-            print(f"[PASS] transformers version: {version}")
-        else:
-            print(f"[FAIL] transformers version: {version}")
+    for lib_name, module_name in library_mapping.items():
+        try:
+            importlib.import_module(module_name)
+            results[lib_name] = "SUCCESS"
+        except ImportError as e:
+            results[lib_name] = f"FAILURE: {e}"
             overall_success = False
-    except ImportError as e:
-        print(f"[FAIL] Failed to import transformers: {e}")
-        overall_success = False
-    
-    try:
-        import pandas
-        print("[PASS] pandas imported successfully")
-
-        version = pandas.__version__
-        if version >= "2.2.0":
-            print(f"[PASS] pandas version: {version}")
-        else:
-            print(f"[FAIL] pandas version: {version}")
+        except Exception as e:
+            results[lib_name] = f"ERROR: {e}"
             overall_success = False
-    except ImportError as e:
-        print(f"[FAIL] Failed to import pandas: {e}")
-        overall_success = False
-    
-    try:
-        import numpy
-        print("[PASS] numpy imported successfully")
-    except ImportError as e:
-        print(f"[FAIL] Failed to import numpy: {e}")
-        overall_success = False
-    
-    try:
-        import yfinance
-        print("[PASS] yfinance imported successfully")
-    except ImportError as e:
-        print(f"[FAIL] Failed to import yfinance: {e}")
-        overall_success = False
-    
-    try:
-        import requests
-        print("[PASS] requests imported successfully")
-    except ImportError as e:
-        print(f"[FAIL] Failed to import requests: {e}")
-        overall_success = False
-    
-    try:
-        import bs4
-        print("[PASS] beautifulsoup4 imported successfully")
-    except ImportError as e:
-        print(f"[FAIL] Failed to import beautifulsoup4: {e}")
-        overall_success = False
-    
-    try:
-        import feedparser
-        print("[PASS] feedparser imported successfully")
-    except ImportError as e:
-        print(f"[FAIL] Failed to import feedparser: {e}")
-        overall_success = False
-    
-    try:
-        import pytest
-        print("[PASS] pytest imported successfully")
-    except ImportError as e:
-        print(f"[FAIL] Failed to import pytest: {e}")
-        overall_success = False
-    
-    try:
-        import matplotlib
-        print("[PASS] matplotlib imported successfully")
-    except ImportError as e:
-        print(f"[FAIL] Failed to import matplotlib: {e}")
-        overall_success = False
+
+    # Print Summary Table
+    print(f"{'Library':<20} | {'Status':<10}")
+    print("-" * 35)
+    for lib_name, status in results.items():
+        # Truncate status if it's too long for the table, but keep the full error in the dict if needed
+        display_status = status if len(status) < 50 else status[:47] + "..."
+        print(f"{lib_name:<20} | {display_status:<10}")
 
     return overall_success
 
