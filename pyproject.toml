@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "aifinintern"
+version = "0.1.0"
+description = "AiFinIntern Project"
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.13"
+transformers = "*"
+pandas = "*"
+numpy = "*"
+yfinance = "*"
+requests = "*"
+beautifulsoup4 = "*"
+feedparser = "*"
+matplotlib = "*"
+torch = "2.9.1+cu130"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
