@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "aifinintern"
+version = "0.1.0"
+description = "AiFinIntern Project"
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+package-mode = false
+
+[[tool.poetry.source]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cu130"
+priority = "explicit"
+
+[tool.poetry.dependencies]
+python = ">=3.13,<3.15"
+transformers = "*"
+pandas = "*"
+numpy = "*"
+yfinance = "*"
+requests = "*"
+beautifulsoup4 = "*"
+feedparser = "*"
+matplotlib = "*"
+torch = {version = "2.9.1+cu130", source = "pytorch"}
+
+[tool.poetry.group.dev.dependencies]
+pytest = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
