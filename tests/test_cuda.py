@@ -57,6 +57,29 @@ def test_cuda_setup():
         print(f"[FAIL] Error checking CUDA version: {e}")
         overall_success = False
 
+    # Check torch version
+    try:
+        torch_version = torch.__version__
+        if torch_version:
+            print(f"[PASS] torch Version: {torch_version}")
+        else:
+            print("[FAIL] torch Version not found")
+            overall_success = False
+    except Exception as e:
+        print(f"[FAIL] Error checking torch version: {e}")
+        overall_success = False
+
+    # Check compute capability
+    try:
+        if torch.cuda.is_available():
+            compute_capability = torch.cuda.get_device_capability(0)
+            print(f"[PASS] Compute Capability: {compute_capability}")
+        else:
+            print("[SKIP] Skipping compute capability check (CUDA unavailable)")
+    except Exception as e:
+        print(f"[FAIL] Error checking compute capability: {e}")
+        overall_success = False
+
     # Check Memory Availability
     try:
         if torch.cuda.is_available():
