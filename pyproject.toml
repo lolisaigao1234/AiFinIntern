@@ -6,6 +6,11 @@ authors = ["Your Name <you@example.com>"]
 readme = "README.md"
 package-mode = false
 
+[[tool.poetry.source]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cu130"
+priority = "explicit"
+
 [tool.poetry.dependencies]
 python = "^3.13"
 transformers = "*"
@@ -16,7 +21,7 @@ requests = "*"
 beautifulsoup4 = "*"
 feedparser = "*"
 matplotlib = "*"
-torch = "2.9.1+cu130"
+torch = {version = "2.9.1+cu130", source = "pytorch"}
 
 [tool.poetry.group.dev.dependencies]
 pytest = "*"
