@@ -2,6 +2,8 @@ import torch
 import yfinance as yf
 import pandas as pd
 import os
+from datetime import datetime
+import pandas_market_calendars as mcal 
 
 def check_ticker_validity(ticker: str) -> bool:
     """Checks if the ticker symbol is valid."""
@@ -33,13 +35,12 @@ def fetch_price_data(ticker: str, start_date: str, end_date: str) -> pd.DataFram
 def filter_to_market_data_only(df: pd.DataFrame) -> pd.DataFrame:
     """Filters the data to only include market data."""
     days = df["Date"]
+    valid_days = mcal.get_calendar("NYSE").valid_days(start_date, end_date)
     for day in days:
-        if day in ["Saturday", "Sunday"]:
+        if day not in valid_days:
             df = df.drop(day)
-        if day in ["Holiday"]:
-            df = df.drop(day)
-            
-    return df[[]]
+
+    return df
 
 
 
