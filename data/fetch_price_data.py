@@ -42,7 +42,49 @@ def filter_to_market_data_only(df: pd.DataFrame) -> pd.DataFrame:
 
     return df
 
+def trim_to_exact_num_of_days(df: pd.DataFrame, num_of_days: int) -> pd.DataFrame:
+    """Trims the data to only include the exact number of days."""
+    return df.tail(num_of_days)
 
+
+def clean_and_validate_output(df: pd.DataFrame):
+    """Cleans and validates the output data."""
+    opens = df["Open"]
+    closes = df["Close"]
+    volumes = df["Volume"]
+    date = df["Date"]
+    
+    if opens.isnull().values.any() or closes.isnull().values.any() or volumes.isnull().values.any():
+        raise ValueError("Output data contains null values.")
+
+    if opens < 0 or closes < 0 or volumes < 0:
+        raise ValueError("Output data contains negative values.")
+    
+    if date.isnull().values.any():
+        raise ValueError("Output data contains null values.")
+
+    if date != sorted(date):
+        raise ValueError("Output data is not sorted by date in ascending order.")
+
+    if len(opens) != len(closes) or len(opens) != len(volumes) or len(opens) != len(date):
+        raise ValueError("Output data has different lengths.")
+
+    if len(opens) != num_of_days:
+        raise ValueError("Output data has different lengths.")
+
+    if len(closes) != num_of_days:
+        raise ValueError("Output data has different lengths.")
+
+    if len(volumes) != num_of_days:
+        raise ValueError("Output data has different lengths.")
+
+    if len(date) != num_of_days:
+        raise ValueError("Output data has different lengths.")
+
+    if volumes < 0:
+        raise ValueError("Output data contains negative values.")
+
+    print("Output data is valid.")
 
 if __name__ == "__main__":
     ticker_list = ["AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "TSLA", "META"]
