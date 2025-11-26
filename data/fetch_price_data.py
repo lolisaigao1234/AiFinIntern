@@ -56,7 +56,8 @@ def validate_inputs(ticker: str, days: int) -> None:
             f"Invalid ticker '{ticker}'. Must be one of: {', '.join(VALID_TICKERS)}"
         )
     
-    if not isinstance(days, int):
+    # Check for bool first since bool is a subclass of int in Python
+    if isinstance(days, bool) or not isinstance(days, int):
         raise ValueError(f"Days must be an integer, got {type(days).__name__}")
     
     if days < MIN_DAYS or days > MAX_DAYS:
