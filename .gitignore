@@ -10,3 +10,4 @@ data\__pycache__
 .pytest_cache
 /data/__pycache__
 /tests/__pycache__
+/.claude/walkthrough_sections
